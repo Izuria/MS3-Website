@@ -1,0 +1,28 @@
+{
+	"Chicken": [{
+			"name": "Fried Chicken",
+			"price": "11.99",
+			"restaurant": "Great West Chicken",
+			"choices": ["No spice", "Some spice", "Lots of spice"]
+		},
+		{
+			"name": "Grilled Chicken",
+			"price": "13.99",
+			"restaurant": "Great West Chicken",
+			"choices": ["No spice", "Some spice", "Lots of spice"]
+		}
+
+	],
+
+
+	"Rice": [{
+		"name": "Egg Fried Rice",
+		"price": "9.99",
+		"restaurant": "Asian Express",
+		"choices": ["no eggs"]
+
+	}]
+
+
+
+}
