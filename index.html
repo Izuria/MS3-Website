@@ -19,7 +19,7 @@
       text = ""; //resets our text
       for (var i = 0; i < category.length; i++) {
         var food = category[i];
-        text += '<h1><b>' + food.name + '</b><p"font-size:20px;">' + food.price + '</p></h1> <p>' + food.description + '</p><hr>';
+        text += <div class="row"><div class="fakeimg" style="height:150px; float:left; padding-right:10px;">'+"Image"+'</div><h1><b>' + food.name + '</b><p"font-size:20px;">' + food.price + '</p></h1> <p>' + food.description + '</p><hr></div>';
       }
 
       //var foodList = document.getElementById('list');
@@ -51,7 +51,7 @@
 
       var texty = "";
       for (var i = 0; i < foodArray.length; i++) {
-        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;">' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].description + '</p><hr>';
+        texty += <div class="row"><div class="fakeimg" style="height:150px; float:left; padding-right:10px;">'+"Image"+'</div><h1><b>' + foodArray[i].name + '</b><p"font-size:20px;">' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].description + '</p><hr></div>';
       }
 
 
@@ -87,7 +87,7 @@
 
       var texty = "";
       for (var i = 0; i < foodArray.length; i++) {
-        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + '</p><hr>';
+        texty += <div class="row"><div class="fakeimg" style="height:150px; float:left; padding-right:10px;">'+"Image"+'</div><h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + '</p><hr></div>';
       }
 
       $("#menu").html(texty);
@@ -107,6 +107,21 @@
   <style>
     body {
       margin: 0;
+    }
+    
+    /* Fake image */
+    .fakeimg {
+      background-color: #aaa;
+      width: 25%;
+      padding: 20px;
+      clear: both;
+      border: 1px solid red; 
+    }
+
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
     }
 
     .navbar {
