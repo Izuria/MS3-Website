@@ -4,9 +4,12 @@
 <head>
 
 
+
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <script src="food.js"></script>
 
   <script>
     var text = "";
@@ -62,29 +65,32 @@
     function food(category) {
 
 
-      $(document).ready(function () {
-        $.getJSON("https://next.json-generator.com/api/json/get/4yUBvgxqY", function (JSONmenu) {
-          var foodArray;
-          if(category == 'chicken') foodArray = JSONmenu.Chicken;
-          else if(category == 'rice') foodArray = JSONmenu.Rice;
-          else if(category == 'beef') foodArray = JSONmenu.Beef;
-          else if(category == 'noodles') foodArray = JSONmenu.Noodles;
-          else if(category == 'soup') foodArray = JSONmenu.Soup;
+      var foodArray;
 
-          var texty = "";
-          for (var i = 0; i < foodArray.length; i++) {
-            texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + '</p><hr>';
-          }
+      switch(category) {
+        case 'chicken':
+          foodArray = JSONmenu.Chicken;
+          break;
+        case 'rice':
+          foodArray = JSONmenu.Rice;
+          break;
+        case 'noodles':
+          foodArray = JSONmenu.Noodles;
+          break;
+        case 'soup':
+          foodArray = JSONmenu.Soup;
+          break;
+        case 'beef':
+          foodArray = JSONmenu.Beef;
+          break;
+      }
 
-          $("#rice").html(texty);
+      var texty = "";
+      for (var i = 0; i < foodArray.length; i++) {
+        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + '</p><hr>';
+      }
 
-
-
-        }).fail(function () {
-          alert("AHHH");
-        });
-      });
-
+      $("#menu").html(texty);
 
 
 
@@ -282,9 +288,9 @@
       <h1>Categories</h1>
 
       <button onclick="food('chicken')">Chicken</button>
-      <button onclick="food('soup')">Soup</button>
       <button onclick="food('rice')">Rice</button>
       <button onclick="food('noodles')">Noodles</button>
+      <button onclick="food('soup')">Soup</button>
       <button onclick="food('beef')">Beef</button>
 
       <h1>Filters</h1>
@@ -304,11 +310,8 @@
 
 
 
-    <div id="rice">
-
-
-
-
+    <div id="menu">
+    <!-- Consists of the menu. Nothing should be in here -->
     </div>
 
   </div>
