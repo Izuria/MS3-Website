@@ -4,65 +4,48 @@
 <head>
 
 
-
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
   <script src="food.js"></script>
 
-  <script>
-    var text = "";
-
-    //This is a function that populates the menu. category is a json file. We have multiple json files for each food.
-    function populateMenu(category) {
-      text = ""; //resets our text
-      for (var i = 0; i < category.length; i++) {
-        var food = category[i];
-        text += '<h1><b>' + food.name + '</b><p"font-size:20px;">' + food.price + '</p></h1> <p>' + food.description + '</p><hr>';
-      }
-
-      //var foodList = document.getElementById('list');
-      //foodList
-    }
-
-
-
-  </script>
 
   <script>
 
 
 
 
+    function Food(name, price, restaurant, description, rating, choices){
+      this.name = name;
+      this.price = price;
+      this.restaurant = restaurant;
+      this.description = description;
+      this.rating = rating;
+      this.choices = choices;
+      this.amount = 1;
+    }
 
 
 
+    var Cart = {
+      foodInCart: new Array(),
+      total: '0',
 
-    function yeet() {
-      var aChoice = ['code', 'strict'];
-
-      var test1 = new Food("Chicken", 19.95, "President King", aChoice);
-      var test2 = new Food("Rice", 15.59, "fire", aChoice);
-      var foodArray = [test1, test2];
-
-
-
-
-      var texty = "";
-      for (var i = 0; i < foodArray.length; i++) {
-        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;">' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].description + '</p><hr>';
+      updateTotal(){
+        value = 0;
+        for(var i = 0; i < this.foodInCart.length; i++){
+          value += (parseFloat(Cart.foodInCart[i].price) * Cart.foodInCart[i].amount);
+        }
+        this.total = value.toFixed(2);
       }
 
+    };
 
-    }
-
-
-    function runMe() {
-      alert("AHHH");
-    }
 
     function food(category) {
+
 
 
       var foodArray;
@@ -85,22 +68,138 @@
           break;
       }
 
+  
+
       var texty = "";
       for (var i = 0; i < foodArray.length; i++) {
-        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + '</p><hr>';
+
+
+
+
+
+        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + 
+          '</p><p>' + foodArray[i].description + '</p> <button onclick="optionModal(\'' + category + '\',\'' + i + '\')">Add</button><hr>';
+
+
+
       }
 
       $("#menu").html(texty);
 
+    }
+
+    function optionModal(category, index){
+      var texty = "";
+      var foodArray;
+      var theIndex = parseInt(index);
+
+      switch(category) {
+        case 'chicken':
+          foodArray = JSONmenu.Chicken;
+          break;
+        case 'rice':
+          foodArray = JSONmenu.Rice;
+          break;
+        case 'noodles':
+          foodArray = JSONmenu.Noodles;
+          break;
+        case 'soup':
+          foodArray = JSONmenu.Soup;
+          break;
+        case 'beef':
+          foodArray = JSONmenu.Beef;
+          break;
+      }
+
+      var length = foodArray[theIndex].choices.length;
+
+      for(var i = 0; i < foodArray[theIndex].choices.length; i++){
+
+        //TO-DO
+        //Maybe depending if choices are radios or checkboxes, add a check.
 
 
+        texty += 
+        '<input type ="radio" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i] + '">' +
+        '<label for="option' + i + '">'+ foodArray[theIndex].choices[i] + '</label><br>';  
+      }
 
+      $("#foodOptionHeader").html('<p style="font-size:70%;">Customize your ' + foodArray[theIndex].name + '!' + '<button type="button" class="close" data-dismiss="modal">&times;</button></p>');
+      $("#options").html(texty + ' <button onclick="foodToCart(\'' + category + '\',\'' + index + '\'' + ',\'' + 
+      length + '\')" class="btn btn-light btn-default pull-right" data-dismiss="modal"></span>Add</button>');
+      $("#optionModal").modal();
     }
 
 
+    function foodToCart(category, index, options){
+
+      var theIndex = parseInt(index);
+      var food;
+      switch(category) {
+        case 'chicken':
+          food = JSONmenu.Chicken[theIndex];
+          break;
+        case 'rice':
+          food = JSONmenu.Rice[theIndex];
+          break;
+        case 'noodles':
+          food = JSONmenu.Noodles[theIndex];
+          break;
+        case 'soup':
+          food = JSONmenu.Soup[theIndex];
+          break;
+        case 'beef':
+          food = JSONmenu.Beef[theIndex];
+          break;
+      }
+      var theOptions = new Array();
+
+      for(var i = 0; i < options; i++){
+        if(document.getElementById('option' + i).checked){
+          //alert('option' + i);
+          //alert(document.getElementById('option' + i).value);
+          theOptions.push(document.getElementById('option' + i).value);
+        }
+      }
+
+      var theFood = new Food(food.name, food.price, food.restaurant, food.description, food.rating, theOptions);
 
 
+      Cart.foodInCart.push(theFood);
 
+
+      updateCart();
+
+      
+      //alert()
+    }
+
+    function updateCart(){
+
+      Cart["updateTotal"]();
+      
+
+      var total = "<h2>Total: $" + Cart.total + "</h2>"
+      var texty = "";
+      for(var i = 0; i < Cart.foodInCart.length; i++){
+        texty += '<p style="font-size:130%;">' + Cart.foodInCart[i].amount + ' '  + Cart.foodInCart[i].name + '<span style="float: right"> $'  + Cart.foodInCart[i].price +   ' </span></p><ul>';
+        for(var j = 0; j < Cart.foodInCart[i].choices.length; j++){
+          texty += '<li>' + Cart.foodInCart[i].choices[j] + '</li>'
+        }
+        texty += '</ul>';
+      }
+
+      $("#cart").html(texty);
+      $("#cartTotal").html(total + '<a href="checkout.html" class="btn btn-light btn-default" onclick="saveCartSession()">Continue to Checkout</a>');
+    }
+
+
+    function saveCartSession(){
+      alert("This should save the cart session before moving to checkout!\nIt should be a key:value pair Cart:JSON");
+      var cartData = JSON.stringify(Cart);
+      sessionStorage.setItem('Cart', Cart);
+      alert("Session saved. You should be able to retrieve by typing:\nvar variableName = sessionStorage.getItem('Cart')");
+    }
 
   </script>
 
@@ -108,7 +207,11 @@
     body {
       margin: 0;
     }
-    
+
+    input[type="radio"] {  
+      margin-right: 10px;
+    }
+
     .navbar {
       overflow: hidden;
       background-color: rgb(189, 54, 54);
@@ -154,9 +257,9 @@
       margin-top: 30px;
       margin-left: 15%;
       margin-right: 25%;
-      height: 1500px;
-      /* Used in this example to enable scrolling */
+      overflow:auto;
     }
+    
 
     .modal-header,
     h4,
@@ -173,10 +276,11 @@
 
 
     .leftNav {
+      border-right: 2px solid rgb(189, 54, 54);
       padding-left: 10px;
       padding-right: 10px;
       margin-top: 8px;
-      background-color: rgb(185, 185, 185);
+      background-color: rgb(235,235,235);
       position: fixed;
       left: 0;
       width: 15%;
@@ -184,7 +288,7 @@
     }
 
     .leftNav button {
-      background-color: rgb(185, 185, 185);
+      background-color: rgb(235,235,235);
       border: none;
       width: 100%;
       display: block;
@@ -214,10 +318,11 @@
     }
 
     .rightNav {
+      border-left: 2px solid rgb(189, 54, 54);
       padding-left: 10px;
       padding-right: 10px;
       margin-top: 8px;
-      background-color: rgb(185, 185, 185);
+      background-color: rgb(235,235,235);
       position: fixed;
       right: 0;
       width: 25%;
@@ -239,8 +344,47 @@
 
 
 
+
+
+
   <div class="container">
-    <!-- Modal -->
+
+
+    <div class="modal fade" id="optionModal">
+
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header" id="foodOptionHeader" style="padding:10px 15px;">
+            
+          </div>
+          
+          <div class="modal-body" style="padding:70px 50px;">
+            
+            <div id="options">
+
+
+              
+            </div>
+            <!--   <button type="submit" class="btn btn-light btn-default pull-right" data-dismiss="modal"></span>
+              Add</button> -->
+
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- LoginModal -->
     <div class="modal fade" id="loginModal" role="dialog">
       <div class="modal-dialog">
 
@@ -294,11 +438,26 @@
       <button onclick="food('beef')">Beef</button>
 
       <h1>Filters</h1>
-      <a>test2</a>
+      <fieldset>
+        <label for="checkbox-1">2 Star</label>
+        <input type="checkbox" name="checkbox-1" id="checkbox-1">
+        <label for="checkbox-2">3 Star</label>
+        <input type="checkbox" name="checkbox-2" id="checkbox-2">
+        <label for="checkbox-3">4 Star</label>
+        <input type="checkbox" name="checkbox-3" id="checkbox-3">
+        <label for="checkbox-4">5 Star</label>
+        <input type="checkbox" name="checkbox-4" id="checkbox-4">
+      </fieldset>
 
     </div>
     <div class="rightNav">
       <h1 style="text-align:center">Cart</h1>
+      
+      <div id="cart">
+      </div>
+      <div id="cartTotal">
+
+      </div>
     </div>
 
 
