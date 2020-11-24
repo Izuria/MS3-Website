@@ -14,8 +14,9 @@
 
   <script>
 
-
-
+  $( document ).ready(function() {
+      fillCartOnSessionStart();
+  });
 
     function Food(name, price, restaurant, description, rating, choices){
       this.name = name;
@@ -28,7 +29,39 @@
     }
 
 
+    function fillCartOnSessionStart(){
+      if(sessionStorage.getItem('Cart') != null){
+        Cart = JSON.parse(sessionStorage.getItem('Cart'));
+        Cart.updateTotal = function(){
+            value = 0;
+            for(var i = 0; i < this.foodInCart.length; i++){
+              value += (parseFloat(Cart.foodInCart[i].price) * Cart.foodInCart[i].amount);
+            }
+            this.total = value.toFixed(2);
+          };
+          updateCart();
+      }
+      else{
+        Cart = {
+          foodInCart: new Array(),
+          total: '0',
+          updateTotal(){
+            value = 0;
+            for(var i = 0; i < this.foodInCart.length; i++){
+              value += (parseFloat(Cart.foodInCart[i].price) * Cart.foodInCart[i].amount);
+            }
+            this.total = value.toFixed(2);
+          }
+        };
 
+      }
+    }
+
+
+    var Cart;
+
+
+    /*
     var Cart = {
       foodInCart: new Array(),
       total: '0',
@@ -42,6 +75,7 @@
       }
 
     };
+    */
 
 
     function food(category) {
@@ -163,14 +197,8 @@
       }
 
       var theFood = new Food(food.name, food.price, food.restaurant, food.description, food.rating, theOptions);
-
-
       Cart.foodInCart.push(theFood);
-
-
       updateCart();
-
-      
       //alert()
     }
 
@@ -191,13 +219,15 @@
 
       $("#cart").html(texty);
       $("#cartTotal").html(total + '<a href="payment.html" class="btn btn-light btn-default" onclick="saveCartSession()">Continue to Checkout</a>');
+      var cartData = JSON.stringify(Cart);
+      sessionStorage.setItem('Cart', cartData);
     }
 
 
     function saveCartSession(){
       alert("This should save the cart session before moving to checkout!\nIt should be a key:value pair Cart:JSON");
       var cartData = JSON.stringify(Cart);
-      sessionStorage.setItem('Cart', Cart);
+      sessionStorage.setItem('Cart', cartData);
       alert("Session saved. You should be able to retrieve by typing:\nvar variableName = sessionStorage.getItem('Cart')");
     }
 
