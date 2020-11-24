@@ -13,6 +13,7 @@
 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap" rel="stylesheet">
+  
 
   
   <script>
@@ -117,8 +118,15 @@
 
 
 
-        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant +
-          '</p><p>' + foodArray[i].description + '</p> <button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr>';
+        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + 
+          '</p><p>' + foodArray[i].description + '</p>'; 
+          
+          if(foodArray[i].choices != undefined){
+            texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Customize</button><hr>';
+          }
+          else texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr>';
+          
+
 
 
       }
@@ -247,6 +255,11 @@
   </script>
 
   <style>
+
+
+    
+
+    
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
