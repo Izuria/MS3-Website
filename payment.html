@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang = "en">
+	<head>
+    	<title>Payment</title>
+		
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		
+
+		<script type="text/javascript">
+			var card = false;// checks if a card # is given
+			var date = false;// checks if there is an expirery date given
+			var cvc = false;// checks if a cvc is given
+			
+			var ready1 = false;// checks if the first selection is given
+			var ready2 = false;// checks if the second selection is given
+
+			function payByCard() {// if "payByCard" is selected, disable "other"
+ 				document.getElementById("card").disabled = false;
+ 				document.getElementById("month").disabled = false;
+ 				document.getElementById("CVC").disabled = false;
+
+ 				document.getElementById("paypal").disabled = true;
+ 				document.getElementById("op2").disabled = true;
+ 				document.getElementById("op3").disabled = true;
+				
+				payByCardCheck();
+			}
+
+			function other() {// if "other" is selected, disable "payByCard"
+ 				document.getElementById("card").disabled = true;
+ 				document.getElementById("month").disabled = true;
+ 				document.getElementById("CVC").disabled = true;
+				
+ 				document.getElementById("paypal").disabled = false;
+ 				document.getElementById("op2").disabled = false;
+ 				document.getElementById("op3").disabled = false;
+				 
+				otherCheck();
+ 			}
+			
+			function cardCheck() {
+				card = true;
+				payByCardCheck();
+			}
+			
+			function dateCheck() {
+				date = true;
+				payByCardCheck();
+			}
+
+			function cvcCheck() {
+				cvc = true;
+				payByCardCheck();
+			}
+
+			function payByCardCheck() {
+				if(card == true && date == true && cvc == true) {
+					ready1 = true;
+				} else {
+					ready1 = false;
+				}
+
+				continueFin();
+			}
+
+			function otherCheck() {
+				if(document.getElementsByName('options').checked) {
+					ready1 = true;
+				} else {
+					ready1 = false;
+				}
+				
+				continueFin();
+			}
+
+			function selection1() {
+				ready1 = true;
+				continueFin();
+			}
+			
+			function selection2() {
+				ready2 = true;
+				continueFin();
+			}
+			
+			function continueFin() {
+				if(ready1 == true && ready2 == true) {
+					document.getElementById("continue").disabled = false;
+				} else {
+					document.getElementById("continue").disabled = true;
+				}
+			}
+		</script>
+
+		<style>
+			
+			body {
+				margin: 0;
+				font-family: 'Roboto', sans-serif;
+			}
+
+			input[type="radio"] {
+				margin-right: 10px;
+			}
+
+
+
+			.navbar {
+			border-radius: 0;
+			overflow: hidden;
+			background-color: rgb(189, 54, 54);
+			position: fixed;
+			top: 0;
+			width: 100%;
+			z-index:100;
+			}
+
+			.navbar a {
+			float: left;
+			display: block;
+			color: #f2f2f2;
+			text-align: center;
+			padding: 14px 16px;
+			text-decoration: none;
+			font-size: 17px;
+			}
+
+			.navbar button {
+			background-color: rgb(189, 54, 54);
+			border: none;
+			float: right;
+			display: block;
+			color: #f2f2f2;
+			text-align: center;
+			padding: 14px 16px;
+			text-decoration: none;
+			font-size: 17px;
+			}
+
+			.navbar button:hover {
+			background: #ddd;
+			color: black;
+			}
+
+
+			.navbar a:hover {
+			background: #ddd;
+			color: black;
+			}
+
+
+
+			.main {
+
+			padding: 16px;
+			margin-top: 30px;
+			margin-left: 15%;
+			margin-right: 25%;
+			overflow: auto;
+			}
+
+
+			.modal-header,
+			h4,
+			.close {
+			background-color: rgb(189, 54, 54);
+			color: white !important;
+			text-align: center;
+			font-size: 30px;
+			}
+
+			.modal-footer {
+			background-color: #f9f9f9;
+			}
+
+
+			.leftNav {
+			border-right: 2px solid rgb(189, 54, 54);
+			padding-left: 10px;
+			padding-right: 10px;
+			margin-top: 8px;
+			background-color: rgb(245, 245, 245);
+			position: fixed;
+			left: 0;
+			width: 15%;
+			height: 100%;
+			}
+
+			.leftNav button {
+			background-color: rgb(245, 245, 245);
+			border: none;
+			width: 100%;
+			display: block;
+			color: #000000;
+			text-decoration: none;
+			text-align: left;
+			padding: 14px;
+			font-size: 17px;
+			}
+
+			.leftNav button:hover {
+			background: #ddd;
+			color: black;
+
+			}
+
+			.leftNav a {
+			display: block;
+			color: #000000;
+			padding: 14px 16px;
+			text-decoration: none;
+			font-size: 17px;
+			}
+
+			.leftNav a:hover {
+			color: #f1f1f1;
+			}
+
+			.rightNav {
+				border-left: 2px solid rgb(189, 54, 54);
+				padding-left: 10px;
+				padding-right: 10px;
+				margin-top: 8px;
+				background-color: rgb(245, 245, 245);
+				position: fixed;
+				right: 0;
+				width: 25%;
+				height: 100%;
+				overflow: auto;
+			}
+			
+		</style>
+
+
+    </head>
+
+    <body>
+		<div class="navbar">
+			<a href="index.html">refLink1</a>
+			<a href="StoreInfo.html">Store Info</a>
+			<a href="#refLink3">refLink3</a>
+			<button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
+		</div>
+
+		<div class="main">
+			<div class="rightNav">
+				<h1 style="text-align:center">Cart</h1>
+		  
+				<div id="cart">
+				</div>
+				<div id="cartTotal">
+		  
+				</div>
+		</div>
+
+			<div>
+				<div>
+					<h1>How would you like to pay?</h1>
+				</div>
+				
+				<div>	
+					<input type="radio" name = "payment" onclick = "payByCard()">
+					<label>Card</label><br>
+					
+					<label>Card number:</label>
+					<input id = 'card' type="text" disabled onkeydown = "cardCheck()"><br>
+					<label>MM/YY:</label>
+					<input id = 'month'  type="text" disabled onkeydown = "dateCheck()"><br>
+					<label>CVC:</label>
+					<input id = 'CVC' type="text"disabled onkeydown = "cvcCheck ()">
+					<hr>
+				</div>
+				
+				<div>	
+					<input type="radio" name = "payment" onclick = "other()">
+					<label>Other</label><br>
+				
+					<input type="radio" name = "options" id = 'paypal' disabled onclick = "selection1()">
+					<label>paypal</label><br>
+					<input type="radio" name = "options" id = 'op2' disabled onclick = "selection1()">
+					<label>giftcard</label><br>
+					<input type="radio" name = "options" id = 'op3' disabled onclick = "selection1()">
+					<label>cash</label>
+					<hr>
+				</div>
+
+				<div>
+					<input type="radio" name = "when" onclick = "selection2()">
+					<label>Pay now</label><br>
+					<input type="radio" name = "when" onclick = "selection2()">
+					<label>Pay at door</label><br>
+				</div>
+				
+				<button id = 'continue' disabled>Continue</button>
+			</div>
+			
+		</div>
+
+		
+
+	</body>
+</html>
