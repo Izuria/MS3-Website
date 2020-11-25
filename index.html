@@ -117,12 +117,12 @@
 
 
         texty += '<div class="row"><div class="fakeimg" style="height:150px; float:left; padding-right:10px;">Image</div><h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + 
-          '</p><p>' + foodArray[i].description + '</p></div>'; 
+          '</p><p>' + foodArray[i].description + '</p>'; 
           
           if(foodArray[i].choices != undefined){
-            texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Customize</button><hr>';
+            texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Customize</button><hr></div>';
           }
-          else texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr>';
+          else texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr></div>';
           
 
 
@@ -272,6 +272,7 @@
   background-color: #aaa;
   width: 25%;
   padding: 20px;
+  margin: 20px;
 } 
 
 /* Clear floats after the columns */
