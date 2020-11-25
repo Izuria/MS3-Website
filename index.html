@@ -232,12 +232,6 @@
     function updateCart() {
 
       Cart["updateTotal"]();
-
-
-
-
-
-
       var total = '<h2>Total: $' + Cart.total + '</h2>';
       var texty = "";
       for (var i = 0; i < Cart.foodInCart.length; i++) {
@@ -249,7 +243,7 @@
           + Cart.foodInCart[i].amount + '></input> '
           + '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'add\')">+</button> '
           + Cart.foodInCart[i].name + '<span style="float: right"> $'
-          + Cart.foodInCart[i].price * Cart.foodInCart[i].amount + ' </span></p><ul>';
+          + (Cart.foodInCart[i].price * Cart.foodInCart[i].amount).toFixed(2) + ' </span></p><ul>';
         for (var j = 0; j < Cart.foodInCart[i].choices.length; j++) {
           texty += '<li>' + Cart.foodInCart[i].choices[j] + '</li>'
         }
