@@ -13,10 +13,12 @@
 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap" rel="stylesheet">
-  
 
-  
+
+
   <script>
+
+
 
     $(document).ready(function () {
       fillCartOnSessionStart();
@@ -85,6 +87,9 @@
     */
 
 
+
+
+
     function food(category) {
 
 
@@ -118,14 +123,14 @@
 
 
 
-        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + 
-          '</p><p>' + foodArray[i].description + '</p>'; 
-          
-          if(foodArray[i].choices != undefined){
-            texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Customize</button><hr>';
-          }
-          else texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr>';
-          
+        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant +
+          '</p><p>' + foodArray[i].description + '</p>';
+
+        if (foodArray[i].choices != undefined) {
+          texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Customize</button><hr>';
+        }
+        else texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr>';
+
 
 
 
@@ -170,8 +175,7 @@
           //Maybe depending if choices are radios or checkboxes, add a check.
 
 
-          texty +=
-            '<input type ="radio" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i] + '">' +
+          texty += '<input type ="checkbox" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i] + '">' +
             '<label for="option' + i + '">' + foodArray[theIndex].choices[i] + '</label><br>';
         }
 
@@ -230,19 +234,43 @@
       Cart["updateTotal"]();
 
 
+
+
+
+
       var total = '<h2>Total: $' + Cart.total + '</h2>';
       var texty = "";
       for (var i = 0; i < Cart.foodInCart.length; i++) {
-        texty += '<p style="font-size:130%; border-top: 1px solid #A9A9A9; padding: 4px">' + Cart.foodInCart[i].amount + ' ' + Cart.foodInCart[i].name + '<span style="float: right"> $' + Cart.foodInCart[i].price + ' </span></p><ul>';
+
+
+        texty += '<p style="font-size:130%; border-top: 1px solid #A9A9A9; padding: 4px">'
+          + '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'subtract\')">-</button> '
+          + '<input id ="item' + i + '" maxlength="2" style ="width:30px; height:30px;" value ='
+          + Cart.foodInCart[i].amount + '></input> '
+          + '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'add\')">+</button> '
+          + Cart.foodInCart[i].name + '<span style="float: right"> $'
+          + Cart.foodInCart[i].price * Cart.foodInCart[i].amount + ' </span></p><ul>';
         for (var j = 0; j < Cart.foodInCart[i].choices.length; j++) {
           texty += '<li>' + Cart.foodInCart[i].choices[j] + '</li>'
         }
         texty += '</ul>';
+
+
+        //Very badly written code but it works
+
+        $(document).off('change','#item' + i);
+        handler(i);
       }
 
       $("#cart").html(texty);
       $("#cartTotal").html(total + '<a href="payment.html" class="btn btn-light btn-default" onclick="saveCartSession()">Continue to Checkout</a>');
       saveCartSession();
+    }
+
+    function handler(j){
+      return $(document).on('change', '#item' + j, function () {
+          updateFood(j, 'form');
+        });
     }
 
 
@@ -252,14 +280,65 @@
 
     }
 
+
+    function updateFood(index, increment) {
+
+
+ 
+      if (increment == 'subtract') Cart.foodInCart[index].amount--;
+      else if (increment == 'add') Cart.foodInCart[index].amount++;
+      else if (increment == 'form'){ 
+        var val = $('#item' + index).val();
+        if(val >= 0 && val < 100) Cart.foodInCart[index].amount = val;
+        else alert("Please put a number between 0 to 99.");
+    }
+      
+
+      if (Cart.foodInCart[index].amount == 0) Cart.foodInCart.splice(index, 1);
+  
+      updateCart();
+    }
+
+
+
+
+
+
+
+
+    (function($) {
+  $.fn.inputFilter = function(inputFilter) {
+    return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function() {
+      if (inputFilter(this.value)) {
+        this.oldValue = this.value;
+        this.oldSelectionStart = this.selectionStart;
+        this.oldSelectionEnd = this.selectionEnd;
+      } else if (this.hasOwnProperty("oldValue")) {
+        this.value = this.oldValue;
+        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+      } else {
+        this.value = "";
+      }
+    });
+  };
+}(jQuery));
+    /*
+    var text = '';
+    for(var i = 0; i < 100; i++){
+      console.log(i);
+      if(i == 0) text += '<option val=' + i + '>Remove</option>';
+      else if(updatedValue == i) text += '<option val=' + i + ' selected="selected">' + i + '</option>';
+      else text += '<option val=' + i + '>' + i + '</option>';
+      }
+      console.log(text);
+      $('sickID').html(text);
+    */
+
+
+
   </script>
 
   <style>
-
-
-    
-
-    
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
@@ -278,7 +357,7 @@
       position: fixed;
       top: 0;
       width: 100%;
-      z-index:100;
+      z-index: 100;
     }
 
     .navbar a {
@@ -290,6 +369,7 @@
       text-decoration: none;
       font-size: 17px;
     }
+
 
     .navbar button {
       background-color: rgb(189, 54, 54);
@@ -394,7 +474,6 @@
       height: 100%;
       overflow: auto;
     }
-    
   </style>
 </head>
 
@@ -402,7 +481,7 @@
 
   <div class="navbar">
     <a href="index.html">refLink1</a>
-    <a href="StoreInfo.html">Store Info</a>
+    <a href="#refLink2">refLink2</a>
     <a href="#refLink3">refLink3</a>
     <button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
   </div>
@@ -498,6 +577,7 @@
     <div class="leftNav">
       <h1>Categories</h1>
 
+
       <button onclick="food('chicken')">Chicken</button>
       <button onclick="food('rice')">Rice</button>
       <button onclick="food('noodles')">Noodles</button>
@@ -526,6 +606,7 @@
 
       </div>
     </div>
+
 
 
 
