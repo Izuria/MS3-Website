@@ -9,7 +9,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-  <script src="food.js"></script>
+  <script src="food1.json"></script>
 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap" rel="stylesheet">
@@ -72,7 +72,6 @@
     var Cart = {
       foodInCart: new Array(),
       total: '0',
-
       updateTotal(){
         value = 0;
         for(var i = 0; i < this.foodInCart.length; i++){
@@ -80,7 +79,6 @@
         }
         this.total = value.toFixed(2);
       }
-
     };
     */
 
@@ -118,8 +116,8 @@
 
 
 
-        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + 
-          '</p><p>' + foodArray[i].description + '</p>'; 
+        texty += '<div class="row"><div class="fakeimg" style="height:150px; float:left; padding-right:10px;">Image</div><h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + 
+          '</p><p>' + foodArray[i].description + '</p></div>'; 
           
           if(foodArray[i].choices != undefined){
             texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Customize</button><hr>';
@@ -269,7 +267,20 @@
       margin-right: 10px;
     }
 
+/* Fake image */
+.fakeimg {
+  background-color: #aaa;
+  width: 25%;
+  padding: 20px;
+} 
 
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+  padding-bottom: 20px;
+}
 
     .navbar {
       border-radius: 0;
