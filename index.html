@@ -13,22 +13,25 @@
 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap" rel="stylesheet">
-  
 
-  
+
+
   <script>
+
+
 
     $(document).ready(function () {
       fillCartOnSessionStart();
     });
 
-    function Food(name, price, restaurant, description, rating, choices) {
+    function Food(name, price, restaurant, description, rating, choices, addonPrice) {
       this.name = name;
       this.price = price;
       this.restaurant = restaurant;
       this.description = description;
       this.rating = rating;
       this.choices = choices;
+      this.addonPrice = addonPrice;
       this.amount = 1;
     }
 
@@ -40,7 +43,7 @@
         Cart.updateTotal = function () {
           value = 0;
           for (var i = 0; i < this.foodInCart.length; i++) {
-            value += (parseFloat(Cart.foodInCart[i].price) * Cart.foodInCart[i].amount);
+            value += ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount);
           }
           this.total = value.toFixed(2);
         };
@@ -66,6 +69,7 @@
 
 
     var Cart;
+    var choicePrices = new Array(); //Hacky fix for prices of choice
 
 
     /*
@@ -83,6 +87,10 @@
 
     };
     */
+
+
+
+  
 
 
     function food(category) {
@@ -116,16 +124,16 @@
 
 
 
+        //<div class="row"><div class="fakeimg" style="height:150px; float:left; padding-right:10px;">Image</div>
 
+        texty += '<img style="height:150px; width:275px; float:left; margin-right:10px; border:2px solid #bd3636;" src= "' + foodArray[i].image + '"><h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant +
+          '</p><p>' + foodArray[i].description + '</p>';
 
-        texty += '<h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant + 
-          '</p><p>' + foodArray[i].description + '</p>'; 
-          
-          if(foodArray[i].choices != undefined){
-            texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Customize</button><hr>';
-          }
-          else texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr>';
-          
+        if (foodArray[i].choices != undefined) {
+          texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-danger btn-default">Customize</button><hr>';
+        }
+        else texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr>';
+
 
 
 
@@ -139,7 +147,8 @@
     }
 
     function optionModal(category, index) {
-      var texty = "";
+      var required = "";
+      var optional = "";
       var foodArray;
       var theIndex = parseInt(index);
 
@@ -165,18 +174,33 @@
         var length = foodArray[theIndex].choices.length;
 
         for (var i = 0; i < foodArray[theIndex].choices.length; i++) {
-
-          //TO-DO
-          //Maybe depending if choices are radios or checkboxes, add a check.
-
-
-          texty +=
-            '<input type ="radio" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i] + '">' +
-            '<label for="option' + i + '">' + foodArray[theIndex].choices[i] + '</label><br>';
+          choicePrices[i] = foodArray[theIndex].choices[i][2];
+          if (foodArray[theIndex].choices[i][1] == true) {
+            if (required === "") required += '<h2><b>Required:</b></h2>';
+            if (foodArray[theIndex].choices[i][2] > 0) {
+              required += '<input type ="radio" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i][0] + ' - $' + (foodArray[theIndex].choices[i][2]).toFixed(2) + '">' +
+                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] + ' - Add $' + (foodArray[theIndex].choices[i][2]).toFixed(2) +  '</label><br>';
+            }
+            else {
+              required += '<input type ="radio" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i][0] + '">' +
+                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] +  '</label><br>';
+            }
+          }
+          else {
+            if (optional === "") optional += '<h2><b>Optional:</b></h2>';
+            if (foodArray[theIndex].choices[i][2] > 0) {
+              optional += '<input type ="checkbox" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i][0] + ' - $' + (foodArray[theIndex].choices[i][2]).toFixed(2) + '">' +
+                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] + ' - Add $' + (foodArray[theIndex].choices[i][2]).toFixed(2) + '</label><br>';
+            }
+            else {
+              optional += '<input type ="checkbox" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i][0] + '">' +
+                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] + '</label><br>';
+            }
+          }
         }
 
         $("#foodOptionHeader").html('<p style="font-size:70%;">Customize your ' + foodArray[theIndex].name + '!' + '<button type="button" class="close" data-dismiss="modal">&times;</button></p>');
-        $("#options").html(texty + ' <button onclick="foodToCart(\'' + category + '\',\'' + index + '\'' + ',\'' +
+        $("#options").html(required + optional + '.<button onclick="foodToCart(\'' + category + '\',\'' + index + '\'' + ',\'' +
           length + '\')" class="btn btn-light btn-default pull-right" data-dismiss="modal">Add</button>');
         $("#optionModal").modal();
       }
@@ -208,18 +232,20 @@
           break;
       }
       var theOptions = new Array();
+      var addonTotal = 0;
 
       if (options > 0) { //this is a check to see how many options are selected
         for (var i = 0; i < options; i++) {
           if (document.getElementById('option' + i).checked) {
-            //alert('option' + i);
-            //alert(document.getElementById('option' + i).value);
             theOptions.push(document.getElementById('option' + i).value);
+            addonTotal += choicePrices[i];
           }
         }
       }
 
-      var theFood = new Food(food.name, food.price, food.restaurant, food.description, food.rating, theOptions);
+
+
+      var theFood = new Food(food.name, food.price, food.restaurant, food.description, food.rating, theOptions, addonTotal);
       Cart.foodInCart.push(theFood);
       updateCart();
       //alert()
@@ -228,21 +254,40 @@
     function updateCart() {
 
       Cart["updateTotal"]();
-
-
       var total = '<h2>Total: $' + Cart.total + '</h2>';
       var texty = "";
       for (var i = 0; i < Cart.foodInCart.length; i++) {
-        texty += '<p style="font-size:130%; border-top: 1px solid #A9A9A9; padding: 4px">' + Cart.foodInCart[i].amount + ' ' + Cart.foodInCart[i].name + '<span style="float: right"> $' + Cart.foodInCart[i].price + ' </span></p><ul>';
+
+
+
+        texty += '<p style="font-size:130%; border-top: 1px solid #A9A9A9; padding: 4px">'
+          + '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'subtract\')">-</button> '
+          + '<input id ="item' + i + '" maxlength="2" style ="width:30px; height:30px;" value ='
+          + Cart.foodInCart[i].amount + '></input> '
+          + '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'add\')">+</button> '
+          + Cart.foodInCart[i].name + '<span style="float: right"> $'
+          + ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount).toFixed(2) + ' </span></p><ul>';
         for (var j = 0; j < Cart.foodInCart[i].choices.length; j++) {
           texty += '<li>' + Cart.foodInCart[i].choices[j] + '</li>'
         }
         texty += '</ul>';
+
+
+        //Very badly written code but it works
+
+        $(document).off('change', '#item' + i);
+        handler(i);
       }
 
       $("#cart").html(texty);
-      $("#cartTotal").html(total + '<a href="payment.html" class="btn btn-light btn-default" onclick="saveCartSession()">Continue to Checkout</a>');
+      $("#cartTotal").html(total + '<a href="payment.html" class="btn btn-danger btn-default" onclick="saveCartSession()">Continue to Checkout</a>');
       saveCartSession();
+    }
+
+    function handler(j) {
+      return $(document).on('change', '#item' + j, function () {
+        updateFood(j, 'form');
+      });
     }
 
 
@@ -252,20 +297,75 @@
 
     }
 
+
+    function updateFood(index, increment) {
+
+
+
+      if (increment == 'subtract') Cart.foodInCart[index].amount--;
+      else if (increment == 'add') Cart.foodInCart[index].amount++;
+      else if (increment == 'form') {
+        var val = $('#item' + index).val();
+        if (val >= 0 && val < 100) Cart.foodInCart[index].amount = val;
+        else alert("Please put a number between 0 to 99.");
+      }
+
+
+      if (Cart.foodInCart[index].amount == 0) Cart.foodInCart.splice(index, 1);
+
+      updateCart();
+    }
+
+
+
+
+
+
+
+
+    (function ($) {
+      $.fn.inputFilter = function (inputFilter) {
+        return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+          if (inputFilter(this.value)) {
+            this.oldValue = this.value;
+            this.oldSelectionStart = this.selectionStart;
+            this.oldSelectionEnd = this.selectionEnd;
+          } else if (this.hasOwnProperty("oldValue")) {
+            this.value = this.oldValue;
+            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+          } else {
+            this.value = "";
+          }
+        });
+      };
+    }(jQuery));
+    /*
+    var text = '';
+    for(var i = 0; i < 100; i++){
+      console.log(i);
+      if(i == 0) text += '<option val=' + i + '>Remove</option>';
+      else if(updatedValue == i) text += '<option val=' + i + ' selected="selected">' + i + '</option>';
+      else text += '<option val=' + i + '>' + i + '</option>';
+      }
+      console.log(text);
+      $('sickID').html(text);
+    */
+
+
+
   </script>
 
   <style>
-
-
-    
-
-    
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
     }
 
     input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    input[type="checkbox"] {
       margin-right: 10px;
     }
 
@@ -278,7 +378,7 @@
       position: fixed;
       top: 0;
       width: 100%;
-      z-index:100;
+      z-index: 100;
     }
 
     .navbar a {
@@ -290,6 +390,7 @@
       text-decoration: none;
       font-size: 17px;
     }
+
 
     .navbar button {
       background-color: rgb(189, 54, 54);
@@ -394,7 +495,6 @@
       height: 100%;
       overflow: auto;
     }
-    
   </style>
 </head>
 
@@ -402,7 +502,7 @@
 
   <div class="navbar">
     <a href="index.html">refLink1</a>
-    <a href="StoreInfo.html">Store Info</a>
+    <a href="#refLink2">refLink2</a>
     <a href="#refLink3">refLink3</a>
     <button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
   </div>
@@ -429,7 +529,7 @@
 
           <div class="modal-body" style="padding:20px 20px;">
 
-            <div id="options" style="padding:25px 0px;">
+            <div id="options">
 
 
 
@@ -498,6 +598,7 @@
     <div class="leftNav">
       <h1>Categories</h1>
 
+
       <button onclick="food('chicken')">Chicken</button>
       <button onclick="food('rice')">Rice</button>
       <button onclick="food('noodles')">Noodles</button>
@@ -526,6 +627,7 @@
 
       </div>
     </div>
+
 
 
 
