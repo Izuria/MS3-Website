@@ -230,6 +230,24 @@
 				overflow: auto;
 			}
 			
+			.innerRadio {
+				padding-left: 50px;
+			}
+
+			.radio-inline {
+				padding-left: 70px;
+				padding-right: 40px;
+			}
+
+			.continue {
+				position: absolute;
+				left: 40%;
+				border-radius: 8px;
+				padding: 10px 25px;
+				background-color: rgb(189, 54, 54);
+				color:rgb(245, 245, 245)
+			}
+
 		</style>
 
 
@@ -262,37 +280,45 @@
 				<div>	
 					<input type="radio" name = "payment" onclick = "payByCard()">
 					<label>Card</label><br>
-					
-					<label>Card number:</label>
-					<input id = 'card' type="text" disabled onkeydown = "cardCheck()"><br>
-					<label>MM/YY:</label>
-					<input id = 'month'  type="text" disabled onkeydown = "dateCheck()"><br>
-					<label>CVC:</label>
-					<input id = 'CVC' type="text"disabled onkeydown = "cvcCheck ()">
-					<hr>
+					<div class = innerRadio>
+						<label>Card number:</label>
+						<input id = 'card' type="text" disabled onkeydown = "cardCheck()"><br>
+						<label>MM/YY:</label>
+						<input id = 'month'  type="text" disabled onkeydown = "dateCheck()"><br>
+						<label>CVC:</label>
+						<input id = 'CVC' type="text"disabled onkeydown = "cvcCheck ()">
+						<hr>
+					</div>
 				</div>
 				
-				<div>	
+				<di class = outterRadio>	
 					<input type="radio" name = "payment" onclick = "other()">
 					<label>Other</label><br>
+					<div class = innerRadio>
+						<input type="radio" name = "options" id = 'paypal' disabled onclick = "selection1()">
+						<label>paypal</label><br>
+						<input type="radio" name = "options" id = 'op2' disabled onclick = "selection1()">
+						<label>giftcard</label><br>
+						<input type="radio" name = "options" id = 'op3' disabled onclick = "selection1()">
+						<label>cash</label>
+						<hr>
+					</div>
+				</div>
+
+				<div class="radio-inline">
+					<input type="radio" name = "when" onclick = "selection2()">
+					<label>Pay now</label>
+				</div>
 				
-					<input type="radio" name = "options" id = 'paypal' disabled onclick = "selection1()">
-					<label>paypal</label><br>
-					<input type="radio" name = "options" id = 'op2' disabled onclick = "selection1()">
-					<label>giftcard</label><br>
-					<input type="radio" name = "options" id = 'op3' disabled onclick = "selection1()">
-					<label>cash</label>
-					<hr>
+				<div class="radio-inline">
+					<input type="radio" name = "when" onclick = "selection2()">
+					<label>Pay at door</label>
 				</div>
 
 				<div>
-					<input type="radio" name = "when" onclick = "selection2()">
-					<label>Pay now</label><br>
-					<input type="radio" name = "when" onclick = "selection2()">
-					<label>Pay at door</label><br>
+					<br>
+					<button id = 'continue' disabled class = continue>Continue</button>
 				</div>
-				
-				<button id = 'continue' disabled>Continue</button>
 			</div>
 			
 		</div>
