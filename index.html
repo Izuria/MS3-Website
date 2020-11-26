@@ -56,7 +56,7 @@
           updateTotal() {
             value = 0;
             for (var i = 0; i < this.foodInCart.length; i++) {
-              value += (parseFloat(Cart.foodInCart[i].price) * Cart.foodInCart[i].amount);
+              value += ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount);
             }
             this.total = value.toFixed(2);
           }
