@@ -23,6 +23,12 @@
  				document.getElementById("paypal").disabled = true;
  				document.getElementById("op2").disabled = true;
  				document.getElementById("op3").disabled = true;
+
+				
+				document.getElementById("username").style.display = "none";
+				document.getElementById("giftcard").style.display = "none";
+				document.getElementById("payNow").disabled = false;
+				document.getElementById("payAtDoor").disabled = true;
 				
 				payByCardCheck();
 			}
@@ -74,7 +80,26 @@
 				continueFin();
 			}
 
-			function selection1() {
+			function selection1(input) {
+				if(input == 'paypal') {
+					document.getElementById("username").style.display = "inline";
+					document.getElementById("giftcard").style.display = "none";
+				} else if(input == 'giftcard') {
+					document.getElementById("username").style.display = "none";
+					document.getElementById("giftcard").style.display = "inline";
+				} else {
+					document.getElementById("username").style.display = "none";
+					document.getElementById("giftcard").style.display = "none";
+				}
+
+				if(input == 'cash') {
+					document.getElementById("payNow").disabled = true;
+					document.getElementById("payAtDoor").disabled = false;
+				} else {
+					document.getElementById("payNow").disabled = false;
+					document.getElementById("payAtDoor").disabled = true;
+				}
+
 				ready1 = true;
 				continueFin();
 			}
@@ -236,7 +261,7 @@
 
 			.radio-inline {
 				padding-left: 70px;
-				padding-right: 40px;
+				padding-right: 30px;
 			}
 
 			.continue {
@@ -246,6 +271,16 @@
 				padding: 10px 25px;
 				background-color: rgb(189, 54, 54);
 				color:rgb(245, 245, 245)
+			}
+			
+			.userName {
+				display: none;
+				padding-left: 50px;
+			}
+
+			.giftcard {
+				display: none;
+				padding-left: 50px;
 			}
 
 		</style>
@@ -295,35 +330,53 @@
 					<input type="radio" name = "payment" onclick = "other()">
 					<label>Other</label><br>
 					<div class = innerRadio>
-						<input type="radio" name = "options" id = 'paypal' disabled onclick = "selection1()">
+						<input type="radio" name = "options" id = 'paypal' disabled onclick = "selection1('paypal')">
 						<label>paypal</label><br>
-						<input type="radio" name = "options" id = 'op2' disabled onclick = "selection1()">
-						<label>giftcard</label><br>
-						<input type="radio" name = "options" id = 'op3' disabled onclick = "selection1()">
+						
+						<div class = userName id = username>
+							
+							<div class="radio-inline">
+								<label>User name:</label>
+								<input type="text">
+							</div>
+							
+							<div class="radio-inline">
+								<label for="pwd">Password:</label>
+								<input type="password" id="pwd" name="pwd"><br>
+							</div>
+						</div>
+						
+						<div>
+							<input type="radio" name = "options" id = 'op2' disabled onclick = "selection1('giftcard')">
+							<label>giftcard</label><br>
+						</div>
+
+						<div class = giftcard id = giftcard>
+							<label>giftcard number:</label>
+							<input type="text"><br>
+						</div>
+						
+						<input type="radio" name = "options" id = 'op3' disabled onclick = "selection1('cash')">
 						<label>cash</label>
 						<hr>
 					</div>
 				</div>
 
 				<div class="radio-inline">
-					<input type="radio" name = "when" onclick = "selection2()">
+					<input type="radio" name = "when" id = "payNow" onclick = "selection2()">
 					<label>Pay now</label>
 				</div>
 				
 				<div class="radio-inline">
-					<input type="radio" name = "when" onclick = "selection2()">
+					<input type="radio" name = "when" id = "payAtDoor" onclick = "selection2()">
 					<label>Pay at door</label>
 				</div>
 
 				<div>
 					<br>
-					<button id = 'continue' disabled class = continue>Continue</button>
+					<button id = 'continue' disabled class = continue onclick="window.location.href='main.html'">Continue</button>
 				</div>
 			</div>
-			
 		</div>
-
-		
-
 	</body>
 </html>
