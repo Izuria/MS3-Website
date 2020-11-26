@@ -1,147 +1,286 @@
 <!DOCTYPE html>
-<html lang = "en">
-	<head>
-    	<title>Payment</title>
-		
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-		
+<html lang="en">
 
-		<script type="text/javascript">
-			var card = false;// checks if a card # is given
-			var date = false;// checks if there is an expirery date given
-			var cvc = false;// checks if a cvc is given
-			
-			var ready1 = false;// checks if the first selection is given
-			var ready2 = false;// checks if the second selection is given
+<head>
+	<title>Payment</title>
 
-			function payByCard() {// if "payByCard" is selected, disable "other"
- 				document.getElementById("card").disabled = false;
- 				document.getElementById("month").disabled = false;
- 				document.getElementById("CVC").disabled = false;
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
- 				document.getElementById("paypal").disabled = true;
- 				document.getElementById("op2").disabled = true;
- 				document.getElementById("op3").disabled = true;
 
-				
+	<script type="text/javascript">
+		var card = false;// checks if a card # is given
+		var date = false;// checks if there is an expirery date given
+		var cvc = false;// checks if a cvc is given
+
+		var ready1 = false;// checks if the first selection is given
+		var ready2 = false;// checks if the second selection is given
+
+		function payByCard() {// if "payByCard" is selected, disable "other"
+			document.getElementById("card").disabled = false;
+			document.getElementById("month").disabled = false;
+			document.getElementById("CVC").disabled = false;
+
+			document.getElementById("paypal").disabled = true;
+			document.getElementById("op2").disabled = true;
+			document.getElementById("op3").disabled = true;
+
+
+			document.getElementById("username").style.display = "none";
+			document.getElementById("giftcard").style.display = "none";
+			document.getElementById("payNow").disabled = false;
+			document.getElementById("payAtDoor").disabled = true;
+
+			payByCardCheck();
+		}
+
+		function other() {// if "other" is selected, disable "payByCard"
+			document.getElementById("card").disabled = true;
+			document.getElementById("month").disabled = true;
+			document.getElementById("CVC").disabled = true;
+
+			document.getElementById("paypal").disabled = false;
+			document.getElementById("op2").disabled = false;
+			document.getElementById("op3").disabled = false;
+
+			otherCheck();
+		}
+
+		function cardCheck() {
+			card = true;
+			payByCardCheck();
+		}
+
+		function dateCheck() {
+			date = true;
+			payByCardCheck();
+		}
+
+		function cvcCheck() {
+			cvc = true;
+			payByCardCheck();
+		}
+
+		function payByCardCheck() {
+			if (card == true && date == true && cvc == true) {
+				ready1 = true;
+			} else {
+				ready1 = false;
+			}
+
+			continueFin();
+		}
+
+		function otherCheck() {
+			if (document.getElementsByName('options').checked) {
+				ready1 = true;
+			} else {
+				ready1 = false;
+			}
+
+			continueFin();
+		}
+
+		function selection1(input) {
+			if (input == 'paypal') {
+				document.getElementById("username").style.display = "inline";
+				document.getElementById("giftcard").style.display = "none";
+			} else if (input == 'giftcard') {
+				document.getElementById("username").style.display = "none";
+				document.getElementById("giftcard").style.display = "inline";
+			} else {
 				document.getElementById("username").style.display = "none";
 				document.getElementById("giftcard").style.display = "none";
+			}
+
+			if (input == 'cash') {
+				document.getElementById("payNow").disabled = true;
+				document.getElementById("payAtDoor").disabled = false;
+			} else {
 				document.getElementById("payNow").disabled = false;
 				document.getElementById("payAtDoor").disabled = true;
-				
-				payByCardCheck();
 			}
 
-			function other() {// if "other" is selected, disable "payByCard"
- 				document.getElementById("card").disabled = true;
- 				document.getElementById("month").disabled = true;
- 				document.getElementById("CVC").disabled = true;
-				
- 				document.getElementById("paypal").disabled = false;
- 				document.getElementById("op2").disabled = false;
- 				document.getElementById("op3").disabled = false;
-				 
-				otherCheck();
- 			}
-			
-			function cardCheck() {
-				card = true;
-				payByCardCheck();
-			}
-			
-			function dateCheck() {
-				date = true;
-				payByCardCheck();
-			}
+			ready1 = true;
+			continueFin();
+		}
 
-			function cvcCheck() {
-				cvc = true;
-				payByCardCheck();
-			}
+		function selection2() {
+			ready2 = true;
+			continueFin();
+		}
 
-			function payByCardCheck() {
-				if(card == true && date == true && cvc == true) {
-					ready1 = true;
-				} else {
-					ready1 = false;
+		function continueFin() {
+			if (ready1 == true && ready2 == true) {
+				document.getElementById("continue").disabled = false;
+			} else {
+				document.getElementById("continue").disabled = true;
+			}
+		}
+
+
+
+
+
+		//my script part goes here
+
+		var Cart;
+
+		$(document).ready(function () {
+			fillCartOnSessionStart();
+		});
+
+		function Food(name, price, restaurant, description, rating, choices, addonPrice) {
+			this.name = name;
+			this.price = price;
+			this.restaurant = restaurant;
+			this.description = description;
+			this.rating = rating;
+			this.choices = choices;
+			this.addonPrice = addonPrice;
+			this.amount = 1;
+		}
+
+		function fillCartOnSessionStart() {
+			$("#menu").html('<h1 style="text-align:center">Please select a category to get started.</h1>');
+			if (sessionStorage.getItem('Cart') != null) {
+				Cart = JSON.parse(sessionStorage.getItem('Cart'));
+				Cart.updateTotal = function () {
+					value = 0;
+					for (var i = 0; i < this.foodInCart.length; i++) {
+						value += ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount);
+					}
+					this.total = value.toFixed(2);
+				};
+				updateCart();
+			}
+			else {
+				Cart = {
+					foodInCart: new Array(),
+					total: '0',
+					updateTotal() {
+						value = 0;
+						for (var i = 0; i < this.foodInCart.length; i++) {
+							value += ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount);
+						}
+						this.total = value.toFixed(2);
+					}
+				};
+				$('#cart').html('<h3 style="text-align:center; border-top: 1px solid #A9A9A9; padding: 10px;">Your cart is currently empty</h3>');
+			}
+		}
+
+		function updateCart() {
+
+			Cart["updateTotal"]();
+			var total = '<h2>Total: $' + Cart.total + '</h2>';
+			var texty = "";
+			for (var i = 0; i < Cart.foodInCart.length; i++) {
+				texty += '<p style="font-size:130%; border-top: 1px solid #A9A9A9; padding: 4px">'
+					+ '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'subtract\')">-</button> '
+					+ '<input id ="item' + i + '" maxlength="2" style ="width:30px; height:30px;" value ='
+					+ Cart.foodInCart[i].amount + '></input> '
+					+ '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'add\')">+</button> '
+					+ Cart.foodInCart[i].name + '<span style="float: right"> $'
+					+ ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount).toFixed(2) + ' </span></p><ul>';
+				for (var j = 0; j < Cart.foodInCart[i].choices.length; j++) {
+					texty += '<li>' + Cart.foodInCart[i].choices[j] + '</li>'
 				}
-
-				continueFin();
+				texty += '</ul>';
+				//Very badly written code but it works
+				$(document).off('change', '#item' + i);
+				handler(i);
 			}
 
-			function otherCheck() {
-				if(document.getElementsByName('options').checked) {
-					ready1 = true;
-				} else {
-					ready1 = false;
-				}
-				
-				continueFin();
+			if (Cart.foodInCart.length == 0) {
+				$('#cart').html('<h3 style="text-align:center; border-top: 1px solid #A9A9A9; padding: 10px;">Your cart is currently empty</h3>');
+				$("#cartTotal").html("");
 			}
-
-			function selection1(input) {
-				if(input == 'paypal') {
-					document.getElementById("username").style.display = "inline";
-					document.getElementById("giftcard").style.display = "none";
-				} else if(input == 'giftcard') {
-					document.getElementById("username").style.display = "none";
-					document.getElementById("giftcard").style.display = "inline";
-				} else {
-					document.getElementById("username").style.display = "none";
-					document.getElementById("giftcard").style.display = "none";
-				}
-
-				if(input == 'cash') {
-					document.getElementById("payNow").disabled = true;
-					document.getElementById("payAtDoor").disabled = false;
-				} else {
-					document.getElementById("payNow").disabled = false;
-					document.getElementById("payAtDoor").disabled = true;
-				}
-
-				ready1 = true;
-				continueFin();
+			else {
+				$("#cart").html(texty);
+				$("#cartTotal").html(total + '<a href="payment.html" class="btn btn-danger btn-default" onclick="saveCartSession()">Continue to Checkout</a>');
 			}
-			
-			function selection2() {
-				ready2 = true;
-				continueFin();
-			}
-			
-			function continueFin() {
-				if(ready1 == true && ready2 == true) {
-					document.getElementById("continue").disabled = false;
-				} else {
-					document.getElementById("continue").disabled = true;
-				}
-			}
-		</script>
+			saveCartSession();
+		}
 
-		<style>
-			
-			body {
-				margin: 0;
-				font-family: 'Roboto', sans-serif;
-			}
-
-			input[type="radio"] {
-				margin-right: 10px;
-			}
+		function handler(j) {
+			return $(document).on('change', '#item' + j, function () {
+				updateFood(j, 'form');
+			});
+		}
 
 
+		function saveCartSession() {
+			var cartData = JSON.stringify(Cart);
+			sessionStorage.setItem('Cart', cartData);
 
-			.navbar {
+		}
+
+		function updateFood(index, increment) {
+      var originalVal = Cart.foodInCart[index].amount;
+      if (increment == 'subtract') Cart.foodInCart[index].amount--;
+      else if (increment == 'add') Cart.foodInCart[index].amount++;
+      else if (increment == 'form') {
+        var val = $('#item' + index).val();
+        if (val >= 0 && val < 100) Cart.foodInCart[index].amount = val;
+        else alert("Please put a number between 0 to 99.");
+      }
+
+
+      if (Cart.foodInCart[index].amount == 0) {
+        $("#alertHeader").html('Alert!<button type="button" class="close" data-dismiss="modal">&times;</button>');
+        $("#alert").html('<p style="font-size:110%;">Are you sure you want to remove ' + Cart.foodInCart[index].name + '?</p>' +
+          '<button data-dismiss="modal" onClick="alertFood(' + index + ',' + true + ',' + originalVal + ')" class="btn btn-success">yes</button> <span style="float:right"><button data-dismiss="modal" onClick="alertFood(' + index + ',' + false + ',' + originalVal + ')" class="btn btn-danger">no</button>');
+        $("#alertModal").modal();
+        //Cart.foodInCart.splice(index, 1);
+      }
+      else {
+        updateCart();
+      }
+    }
+
+    function alertFood(index, toDelete, originalVal) {
+      if (toDelete) {
+        Cart.foodInCart.splice(index, 1);
+        updateCart();
+      }
+      else {
+        Cart.foodInCart[index].amount = originalVal;
+        updateCart();
+      }
+	}
+	
+
+
+
+
+
+	</script>
+
+	<style>
+		body {
+			margin: 0;
+			font-family: 'Roboto', sans-serif;
+		}
+
+		input[type="radio"] {
+			margin-right: 10px;
+		}
+
+
+
+		.navbar {
 			border-radius: 0;
 			overflow: hidden;
 			background-color: rgb(189, 54, 54);
 			position: fixed;
 			top: 0;
 			width: 100%;
-			z-index:100;
-			}
+			z-index: 100;
+		}
 
-			.navbar a {
+		.navbar a {
 			float: left;
 			display: block;
 			color: #f2f2f2;
@@ -149,9 +288,9 @@
 			padding: 14px 16px;
 			text-decoration: none;
 			font-size: 17px;
-			}
+		}
 
-			.navbar button {
+		.navbar button {
 			background-color: rgb(189, 54, 54);
 			border: none;
 			float: right;
@@ -161,46 +300,46 @@
 			padding: 14px 16px;
 			text-decoration: none;
 			font-size: 17px;
-			}
+		}
 
-			.navbar button:hover {
+		.navbar button:hover {
 			background: #ddd;
 			color: black;
-			}
+		}
 
 
-			.navbar a:hover {
+		.navbar a:hover {
 			background: #ddd;
 			color: black;
-			}
+		}
 
 
 
-			.main {
+		.main {
 
 			padding: 16px;
 			margin-top: 30px;
 			margin-left: 15%;
 			margin-right: 25%;
 			overflow: auto;
-			}
+		}
 
 
-			.modal-header,
-			h4,
-			.close {
+		.modal-header,
+		h4,
+		.close {
 			background-color: rgb(189, 54, 54);
 			color: white !important;
 			text-align: center;
 			font-size: 30px;
-			}
+		}
 
-			.modal-footer {
+		.modal-footer {
 			background-color: #f9f9f9;
-			}
+		}
 
 
-			.leftNav {
+		.leftNav {
 			border-right: 2px solid rgb(189, 54, 54);
 			padding-left: 10px;
 			padding-right: 10px;
@@ -210,9 +349,9 @@
 			left: 0;
 			width: 15%;
 			height: 100%;
-			}
+		}
 
-			.leftNav button {
+		.leftNav button {
 			background-color: rgb(245, 245, 245);
 			border: none;
 			width: 100%;
@@ -222,161 +361,226 @@
 			text-align: left;
 			padding: 14px;
 			font-size: 17px;
-			}
+		}
 
-			.leftNav button:hover {
+		.leftNav button:hover {
 			background: #ddd;
 			color: black;
 
-			}
+		}
 
-			.leftNav a {
+		.leftNav a {
 			display: block;
 			color: #000000;
 			padding: 14px 16px;
 			text-decoration: none;
 			font-size: 17px;
-			}
+		}
 
-			.leftNav a:hover {
+		.leftNav a:hover {
 			color: #f1f1f1;
-			}
+		}
 
-			.rightNav {
-				border-left: 2px solid rgb(189, 54, 54);
-				padding-left: 10px;
-				padding-right: 10px;
-				margin-top: 8px;
-				background-color: rgb(245, 245, 245);
-				position: fixed;
-				right: 0;
-				width: 25%;
-				height: 100%;
-				overflow: auto;
-			}
-			
-			.innerRadio {
-				padding-left: 50px;
-			}
+		.rightNav {
+			border-left: 2px solid rgb(189, 54, 54);
+			padding-left: 10px;
+			padding-right: 10px;
+			margin-top: 8px;
+			background-color: rgb(245, 245, 245);
+			position: fixed;
+			right: 0;
+			width: 25%;
+			height: 100%;
+			overflow: auto;
+		}
 
-			.radio-inline {
-				padding-left: 70px;
-				padding-right: 30px;
-			}
+		.innerRadio {
+			padding-left: 50px;
+		}
 
-			.continue {
-				position: absolute;
-				left: 40%;
-				border-radius: 8px;
-				padding: 10px 25px;
-				background-color: rgb(189, 54, 54);
-				color:rgb(245, 245, 245)
-			}
-			
-			.userName {
-				display: none;
-				padding-left: 50px;
-			}
+		.radio-inline {
+			padding-left: 70px;
+			padding-right: 30px;
+		}
 
-			.giftcard {
-				display: none;
-				padding-left: 50px;
-			}
+		.continue {
+			position: absolute;
+			left: 40%;
+			border-radius: 8px;
+			padding: 10px 25px;
+			background-color: rgb(189, 54, 54);
+			color: rgb(245, 245, 245)
+		}
 
-		</style>
+		.userName {
+			display: none;
+			padding-left: 50px;
+		}
+
+		.giftcard {
+			display: none;
+			padding-left: 50px;
+		}
+	</style>
 
 
-    </head>
+</head>
 
-    <body>
-		<div class="navbar">
-			<a href="index.html">refLink1</a>
-			<a href="StoreInfo.html">Store Info</a>
-			<a href="#refLink3">refLink3</a>
-			<button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
-		</div>
+<body>
+	<div class="navbar">
+		<a href="index.html">refLink1</a>
+		<a href="StoreInfo.html">Store Info</a>
+		<a href="#refLink3">refLink3</a>
+		<button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
+	</div>
 
-		<div class="main">
-			<div class="rightNav">
-				<h1 style="text-align:center">Cart</h1>
-		  
-				<div id="cart">
-				</div>
-				<div id="cartTotal">
-		  
-				</div>
-		</div>
+	<div class="main">
+		<div class="rightNav">
+			<h1 style="text-align:center">Cart</h1>
 
-			<div>
-				<div>
-					<h1>How would you like to pay?</h1>
-				</div>
-				
-				<div>	
-					<input type="radio" name = "payment" onclick = "payByCard()">
-					<label>Card</label><br>
-					<div class = innerRadio>
-						<label>Card number:</label>
-						<input id = 'card' type="text" disabled onkeydown = "cardCheck()"><br>
-						<label>MM/YY:</label>
-						<input id = 'month'  type="text" disabled onkeydown = "dateCheck()"><br>
-						<label>CVC:</label>
-						<input id = 'CVC' type="text"disabled onkeydown = "cvcCheck ()">
-						<hr>
-					</div>
-				</div>
-				
-				<di class = outterRadio>	
-					<input type="radio" name = "payment" onclick = "other()">
-					<label>Other</label><br>
-					<div class = innerRadio>
-						<input type="radio" name = "options" id = 'paypal' disabled onclick = "selection1('paypal')">
-						<label>paypal</label><br>
-						
-						<div class = userName id = username>
-							
-							<div class="radio-inline">
-								<label>User name:</label>
-								<input type="text">
-							</div>
-							
-							<div class="radio-inline">
-								<label for="pwd">Password:</label>
-								<input type="password" id="pwd" name="pwd"><br>
-							</div>
-						</div>
-						
-						<div>
-							<input type="radio" name = "options" id = 'op2' disabled onclick = "selection1('giftcard')">
-							<label>giftcard</label><br>
-						</div>
+			<div id="cart">
+			</div>
+			<div id="cartTotal">
 
-						<div class = giftcard id = giftcard>
-							<label>giftcard number:</label>
-							<input type="text"><br>
-						</div>
-						
-						<input type="radio" name = "options" id = 'op3' disabled onclick = "selection1('cash')">
-						<label>cash</label>
-						<hr>
-					</div>
-				</div>
-
-				<div class="radio-inline">
-					<input type="radio" name = "when" id = "payNow" onclick = "selection2()">
-					<label>Pay now</label>
-				</div>
-				
-				<div class="radio-inline">
-					<input type="radio" name = "when" id = "payAtDoor" onclick = "selection2()">
-					<label>Pay at door</label>
-				</div>
-
-				<div>
-					<br>
-					<button id = 'continue' disabled class = continue onclick="window.location.href='main.html'">Continue</button>
-				</div>
 			</div>
 		</div>
-	</body>
+
+		<div>
+			<div>
+				<h1>How would you like to pay?</h1>
+			</div>
+
+			<div>
+				<input type="radio" name="payment" onclick="payByCard()">
+				<label>Card</label><br>
+				<div class=innerRadio>
+					<label>Card number:</label>
+					<input id='card' type="text" disabled onkeydown="cardCheck()"><br>
+					<label>MM/YY:</label>
+					<input id='month' type="text" disabled onkeydown="dateCheck()"><br>
+					<label>CVC:</label>
+					<input id='CVC' type="text" disabled onkeydown="cvcCheck ()">
+					<hr>
+				</div>
+			</div>
+
+			<di class=outterRadio>
+				<input type="radio" name="payment" onclick="other()">
+				<label>Other</label><br>
+				<div class=innerRadio>
+					<input type="radio" name="options" id='paypal' disabled onclick="selection1('paypal')">
+					<label>paypal</label><br>
+
+					<div class=userName id=username>
+
+						<div class="radio-inline">
+							<label>User name:</label>
+							<input type="text">
+						</div>
+
+						<div class="radio-inline">
+							<label for="pwd">Password:</label>
+							<input type="password" id="pwd" name="pwd"><br>
+						</div>
+					</div>
+
+					<div>
+						<input type="radio" name="options" id='op2' disabled onclick="selection1('giftcard')">
+						<label>giftcard</label><br>
+					</div>
+
+					<div class=giftcard id=giftcard>
+						<label>giftcard number:</label>
+						<input type="text"><br>
+					</div>
+
+					<input type="radio" name="options" id='op3' disabled onclick="selection1('cash')">
+					<label>cash</label>
+					<hr>
+				</div>
+		</div>
+
+		<div class="radio-inline">
+			<input type="radio" name="when" id="payNow" onclick="selection2()">
+			<label>Pay now</label>
+		</div>
+
+		<div class="radio-inline">
+			<input type="radio" name="when" id="payAtDoor" onclick="selection2()">
+			<label>Pay at door</label>
+		</div>
+
+		<div>
+			<br>
+			<button id='continue' disabled class=continue onclick="window.location.href='main.html'">Continue</button>
+		</div>
+	</div>
+	</div>
+
+
+
+	<!-- This is for the modal(popups) for login and alert -->
+	<div class="container">
+		<div class="modal fade" id="alertModal">
+		  <div class="modal-dialog modal-sm" style="padding-top: 15%;">
+			<!-- Modal content-->
+			<div class="modal-content">
+			  <div class="modal-header" id="alertHeader" style="padding:10px 15px;">
+			  </div>
+	
+			  <div class="modal-body" style="padding:20px 20px;">
+	
+				<div id="alert">
+	
+				</div>
+
+			  </div>
+			</div>
+		  </div>
+		</div>
+
+		<!-- LoginModal -->
+		<div class="modal fade" id="loginModal" role="dialog">
+		  <div class="modal-dialog">
+	
+			<!-- Modal content-->
+			<div class="modal-content">
+			  <div class="modal-header" style="padding:35px 50px;">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4>Login</h4>
+			  </div>
+			  <div class="modal-body" style="padding:40px 50px;">
+				<form role="form">
+				  <div class="form-group">
+					<label for="usrname"></span> Username</label>
+					<input type="text" class="form-control" id="usrname" placeholder="Enter username">
+				  </div>
+				  <div class="form-group">
+					<label for="psw"></span> Password</label>
+					<input type="password" class="form-control" id="psw" placeholder="Enter password">
+				  </div>
+				  <div class="checkbox">
+					<label><input type="checkbox" value="" checked>Remember me</label>
+				  </div>
+				  <button type="submit" class="btn btn-light btn-default" </span> Login</button>
+				</form>
+			  </div>
+			  <div class="modal-footer">
+				<button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"></span>
+				  Cancel</button>
+				<p>Not a member? <a href="#">Sign Up</a></p>
+				<p>Forgot <a href="#">Password?</a></p>
+			  </div>
+			</div>
+	
+		  </div>
+		</div>
+	  </div>
+
+
+
+
+
+</body>
+
 </html>
