@@ -25,13 +25,13 @@
       $(document).on('change', '#checkbox' + j, function () {
         if ($("#checkbox" + j).is(':checked')) {
           ratingCheckbox[j] = true;
-          if(currentCategory != undefined)
-          food(currentCategory);
+          if (currentCategory != undefined)
+            food(currentCategory);
         }
         else {
           ratingCheckbox[j] = false;
-          if(currentCategory != undefined)
-          food(currentCategory);
+          if (currentCategory != undefined)
+            food(currentCategory);
         }
       });
     }
@@ -285,8 +285,14 @@
         handler(i);
       }
 
-      $("#cart").html(texty);
-      $("#cartTotal").html(total + '<a href="payment.html" class="btn btn-danger btn-default" onclick="saveCartSession()">Continue to Checkout</a>');
+      if (Cart.foodInCart.length == 0) {
+        $('#cart').html('<h3 style="text-align:center; border-top: 1px solid #A9A9A9; padding: 10px;">Your cart is currently empty</h3>');
+        $("#cartTotal").html("");
+      }
+      else {
+        $("#cart").html(texty);
+        $("#cartTotal").html(total + '<a href="payment.html" class="btn btn-danger btn-default" onclick="saveCartSession()">Continue to Checkout</a>');
+      }
       saveCartSession();
     }
 
