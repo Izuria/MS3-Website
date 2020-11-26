@@ -19,6 +19,30 @@
   <script>
 
 
+    var currentCategory;
+
+    function choiceHandler(j) {
+      $(document).on('change', '#checkbox' + j, function () {
+        if ($("#checkbox" + j).is(':checked')) {
+          ratingCheckbox[j] = true;
+          if(currentCategory != undefined)
+          food(currentCategory);
+        }
+        else {
+          ratingCheckbox[j] = false;
+          if(currentCategory != undefined)
+          food(currentCategory);
+        }
+      });
+    }
+
+    for (var i = 0; i < 4; i++) {
+      choiceHandler(i);
+    }
+
+    var ratingCheckbox = [false, false, false, false, false];
+
+
 
     $(document).ready(function () {
       fillCartOnSessionStart();
@@ -67,36 +91,13 @@
       }
     }
 
-
     var Cart;
     var choicePrices = new Array(); //Hacky fix for prices of choice
-
-
-    /*
-    var Cart = {
-      foodInCart: new Array(),
-      total: '0',
-
-      updateTotal(){
-        value = 0;
-        for(var i = 0; i < this.foodInCart.length; i++){
-          value += (parseFloat(Cart.foodInCart[i].price) * Cart.foodInCart[i].amount);
-        }
-        this.total = value.toFixed(2);
-      }
-
-    };
-    */
-
-
-
-  
-
 
     function food(category) {
 
 
-
+      currentCategory = category;
       var foodArray;
 
       switch (category) {
@@ -117,24 +118,29 @@
           break;
       }
 
-
+      var highestFilter = -2;
+      for (var i = 3; i >= 0; i--) {
+        if (ratingCheckbox[i] == true) {
+          highestFilter = i;
+          break;
+        }
+      }
 
       var texty = '<h1 style="font-size: 46px;  border-bottom: 1px solid #A9A9A9; margin: 37px 0px"><b>' + category.charAt(0).toUpperCase() + category.slice(1) + ' Dishes</b></h1>';
       for (var i = 0; i < foodArray.length; i++) {
 
+        if (foodArray[i].rating >= (highestFilter + 2)) {
+          texty += '<img style="height:150px; width:275px; float:left; margin-right:10px; border:2px solid #bd3636;" src= "' + foodArray[i].image + '"><h1><b>'
+            + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '<span style="font-size: 20px; float:right;">Rating: ' + foodArray[i].rating + '</span>'
+            + '</p></h1> <p>' + foodArray[i].restaurant +
+            '</p><p>' + foodArray[i].description + '</p>';
 
+          if (foodArray[i].choices != undefined) {
+            texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-danger btn-default">Customize</button><hr>';
+          }
+          else texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr>';
 
-        //<div class="row"><div class="fakeimg" style="height:150px; float:left; padding-right:10px;">Image</div>
-
-        texty += '<img style="height:150px; width:275px; float:left; margin-right:10px; border:2px solid #bd3636;" src= "' + foodArray[i].image + '"><h1><b>' + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '</p></h1> <p>' + foodArray[i].restaurant +
-          '</p><p>' + foodArray[i].description + '</p>';
-
-        if (foodArray[i].choices != undefined) {
-          texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-danger btn-default">Customize</button><hr>';
         }
-        else texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr>';
-
-
 
 
       }
@@ -179,11 +185,11 @@
             if (required === "") required += '<h2><b>Required:</b></h2>';
             if (foodArray[theIndex].choices[i][2] > 0) {
               required += '<input type ="radio" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i][0] + ' - $' + (foodArray[theIndex].choices[i][2]).toFixed(2) + '">' +
-                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] + ' - Add $' + (foodArray[theIndex].choices[i][2]).toFixed(2) +  '</label><br>';
+                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] + ' - Add $' + (foodArray[theIndex].choices[i][2]).toFixed(2) + '</label><br>';
             }
             else {
               required += '<input type ="radio" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i][0] + '">' +
-                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] +  '</label><br>';
+                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] + '</label><br>';
             }
           }
           else {
@@ -299,9 +305,7 @@
 
 
     function updateFood(index, increment) {
-
-
-
+      var originalVal = Cart.foodInCart[index].amount;
       if (increment == 'subtract') Cart.foodInCart[index].amount--;
       else if (increment == 'add') Cart.foodInCart[index].amount++;
       else if (increment == 'form') {
@@ -311,34 +315,30 @@
       }
 
 
-      if (Cart.foodInCart[index].amount == 0) Cart.foodInCart.splice(index, 1);
+      if (Cart.foodInCart[index].amount == 0) {
+        $("#alertHeader").html('Alert!<button type="button" class="close" data-dismiss="modal">&times;</button>');
+        $("#alert").html('<p style="font-size:110%;">Are you sure you want to remove ' + Cart.foodInCart[index].name + '?</p>' +
+          '<button data-dismiss="modal" onClick="alertFood(' + index + ',' + true + ',' + originalVal + ')" class="btn btn-success">yes</button> <span style="float:right"><button data-dismiss="modal" onClick="alertFood(' + index + ',' + false + ',' + originalVal + ')" class="btn btn-danger">no</button>');
+        $("#alertModal").modal();
+        //Cart.foodInCart.splice(index, 1);
+      }
+      else {
+        updateCart();
+      }
+    }
 
-      updateCart();
+    function alertFood(index, toDelete, originalVal) {
+      if (toDelete) {
+        Cart.foodInCart.splice(index, 1);
+        updateCart();
+      }
+      else {
+        Cart.foodInCart[index].amount = originalVal;
+        updateCart();
+      }
     }
 
 
-
-
-
-
-
-
-    (function ($) {
-      $.fn.inputFilter = function (inputFilter) {
-        return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
-          if (inputFilter(this.value)) {
-            this.oldValue = this.value;
-            this.oldSelectionStart = this.selectionStart;
-            this.oldSelectionEnd = this.selectionEnd;
-          } else if (this.hasOwnProperty("oldValue")) {
-            this.value = this.oldValue;
-            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-          } else {
-            this.value = "";
-          }
-        });
-      };
-    }(jQuery));
     /*
     var text = '';
     for(var i = 0; i < 100; i++){
@@ -517,6 +517,25 @@
   <div class="container">
 
 
+    <div class="modal fade" id="alertModal">
+      <div class="modal-dialog modal-sm" style="padding-top: 15%;">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header" id="alertHeader" style="padding:10px 15px;">
+          </div>
+
+          <div class="modal-body" style="padding:20px 20px;">
+
+            <div id="alert">
+
+            </div>
+            <!--   <button type="submit" class="btn btn-light btn-default pull-right" data-dismiss="modal"></span>
+              Add</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="modal fade" id="optionModal">
 
       <div class="modal-dialog" style="padding-top: 15%;">
@@ -606,15 +625,15 @@
       <button onclick="food('beef')">Beef</button>
 
       <h1>Filters</h1>
-      <fieldset>
-        <label for="checkbox-1">2 Star</label>
-        <input type="checkbox" name="checkbox-1" id="checkbox-1">
-        <label for="checkbox-2">3 Star</label>
-        <input type="checkbox" name="checkbox-2" id="checkbox-2">
-        <label for="checkbox-3">4 Star</label>
-        <input type="checkbox" name="checkbox-3" id="checkbox-3">
-        <label for="checkbox-4">5 Star</label>
-        <input type="checkbox" name="checkbox-4" id="checkbox-4">
+      <fieldset style>
+        <input type="checkbox" name="checkbox0" id="checkbox0">
+        <label for="checkbox0">2 Stars or higher</label>
+        <br><input type="checkbox" name="checkbox1" id="checkbox1">
+        <label for="checkbox1">3 Stars or higher</label>
+        <br><input type="checkbox" name="checkbox2" id="checkbox2">
+        <label for="checkbox2">4 Stars or higher</label>
+        <br><input type="checkbox" name="checkbox3" id="checkbox3">
+        <label for="checkbox3">5 Stars</label>
       </fieldset>
 
     </div>
