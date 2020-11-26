@@ -14,8 +14,12 @@
 		var date = false;// checks if there is an expirery date given
 		var cvc = false;// checks if a cvc is given
 
+		var userName = false;
+		var passWord = false;
+
 		var ready1 = false;// checks if the first selection is given
 		var ready2 = false;// checks if the second selection is given
+		var ready3 = false;// checks if location has been given
 
 		function payByCard() {// if "payByCard" is selected, disable "other"
 			document.getElementById("card").disabled = false;
@@ -97,11 +101,32 @@
 			if (input == 'cash') {
 				document.getElementById("payNow").disabled = true;
 				document.getElementById("payAtDoor").disabled = false;
+				
+				ready1 = true;
 			} else {
 				document.getElementById("payNow").disabled = false;
 				document.getElementById("payAtDoor").disabled = true;
 			}
 
+			continueFin();
+		}
+
+		function paypalFunc(input) {
+			if(input == 'username') {
+				userName = true;
+			}
+
+			if(input == 'password') {
+				passWord = true;
+			}
+
+			if(userName == true && passWord == true) {
+				ready1 = true;
+				continueFin();
+			}
+		}
+
+		function giftcardFunc() {
 			ready1 = true;
 			continueFin();
 		}
@@ -111,15 +136,24 @@
 			continueFin();
 		}
 
+		function selection3() {
+			ready3 = true;
+			continueFin();
+		}
+
 		function continueFin() {
-			if (ready1 == true && ready2 == true) {
+			if (ready1 == true && ready2 == true && ready3 == true) {
 				document.getElementById("continue").disabled = false;
+				document.getElementById("continue").style.background = "rgb(189, 54, 54)";
 			} else {
 				document.getElementById("continue").disabled = true;
 			}
 		}
 
-
+		function purchase() {
+			document.getElementById("center").innerHTML = "";
+			document.getElementById("finalMessage").style.display = "inline";
+		}
 
 
 
@@ -408,7 +442,7 @@
 			left: 40%;
 			border-radius: 8px;
 			padding: 10px 25px;
-			background-color: rgb(189, 54, 54);
+			background-color: rgba(189, 54, 54, 0.363);
 			color: rgb(245, 245, 245)
 		}
 
@@ -421,6 +455,22 @@
 			display: none;
 			padding-left: 50px;
 		}
+
+		.address {
+			padding-top: 10px;
+			padding-left: 50px;
+		}
+
+		.center {
+		}
+		.finalMessage {
+			display: none;
+			position: absolute;
+			height: 10%;
+			padding-top: 10%;
+			width: 30%
+		}
+
 	</style>
 
 
@@ -445,7 +495,7 @@
 			</div>
 		</div>
 
-		<div>
+		<div class = "center" id="center">
 			<div>
 				<h1>How would you like to pay?</h1>
 			</div>
@@ -464,7 +514,7 @@
 				</div>
 			</div>
 
-			<di class=outterRadio>
+			<div class=outterRadio>
 				<input type="radio" name="payment" onclick="other()">
 				<label>Other</label><br>
 				<div class=innerRadio>
@@ -475,12 +525,12 @@
 
 						<div class="radio-inline">
 							<label>User name:</label>
-							<input type="text">
+							<input type="text" onkeydown="paypalFunc('username')">
 						</div>
 
 						<div class="radio-inline">
-							<label for="pwd">Password:</label>
-							<input type="password" id="pwd" name="pwd"><br>
+							<label>Password:</label>
+							<input type="password" onkeydown="paypalFunc('password')"><br>
 						</div>
 					</div>
 
@@ -491,30 +541,46 @@
 
 					<div class=giftcard id=giftcard>
 						<label>giftcard number:</label>
-						<input type="text"><br>
+						<input type="text" onkeydown="giftcardFunc()"><br>
 					</div>
 
 					<input type="radio" name="options" id='op3' disabled onclick="selection1('cash')">
 					<label>cash</label>
 					<hr>
 				</div>
+			</div>
+
+			<div class="radio-inline">
+				<input type="radio" name="when" id="payNow" onclick="selection2()">
+				<label>Pay now</label>
+			</div>
+
+			<div class="radio-inline">
+				<input type="radio" name="when" id="payAtDoor" onclick="selection2()">
+				<label>Pay at door</label>
+			</div>
+
+			<div>
+				<hr>
+				<h3>Where are we delivering To?</h3>
+
+				<div class = "address">
+					<label>Address:</label>
+					<input onkeydown="selection3()" type="text"><br>
+				</div>
+				
+			</div>
+
+			<div>
+				<br>
+				<button id='continue' disabled class=continue onclick="purchase()">Purchase</button>
+			</div>
 		</div>
 
-		<div class="radio-inline">
-			<input type="radio" name="when" id="payNow" onclick="selection2()">
-			<label>Pay now</label>
+		<div class = "finalMessage" id = "finalMessage">
+			<h4>Food is on the way!</h4>
 		</div>
 
-		<div class="radio-inline">
-			<input type="radio" name="when" id="payAtDoor" onclick="selection2()">
-			<label>Pay at door</label>
-		</div>
-
-		<div>
-			<br>
-			<button id='continue' disabled class=continue onclick="window.location.href='main.html'">Continue</button>
-		</div>
-	</div>
 	</div>
 
 
