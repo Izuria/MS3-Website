@@ -9,10 +9,12 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap"
+		rel="stylesheet">
 
 
 	<script type="text/javascript">
+		var purchaseComplete = false;
 		var card = false;// checks if a card # is given
 		var date = false;// checks if there is an expirery date given
 		var cvc = false;// checks if a cvc is given
@@ -104,7 +106,7 @@
 			if (input == 'cash') {
 				document.getElementById("payNow").disabled = true;
 				document.getElementById("payAtDoor").disabled = false;
-				
+
 				ready1 = true;
 			} else {
 				document.getElementById("payNow").disabled = false;
@@ -115,15 +117,15 @@
 		}
 
 		function paypalFunc(input) {
-			if(input == 'username') {
+			if (input == 'username') {
 				userName = true;
 			}
 
-			if(input == 'password') {
+			if (input == 'password') {
 				passWord = true;
 			}
 
-			if(userName == true && passWord == true) {
+			if (userName == true && passWord == true) {
 				ready1 = true;
 				continueFin();
 			}
@@ -154,8 +156,13 @@
 		}
 
 		function purchase() {
+			purchaseComplete = true;
+			var addr = document.getElementById('addressinput').value;
 			document.getElementById("center").innerHTML = "";
+			document.getElementById("finalMessage").innerHTML = '<H1 style="text-align: center;	">' + 'Your food is on the way to ' + addr + '!</H1>';
 			document.getElementById("finalMessage").style.display = "inline";
+			updateCart();
+			sessionStorage.clear();
 		}
 
 
@@ -170,8 +177,8 @@
 			getAddrOnStart();
 		});
 
-		function getAddrOnStart(){
-			if (sessionStorage.getItem('address') != null){
+		function getAddrOnStart() {
+			if (sessionStorage.getItem('address') != null) {
 				var theaddress = sessionStorage.getItem('address');
 				document.getElementById('addressinput').value = theaddress;
 				selection3();
@@ -224,20 +231,32 @@
 			var total = '<h2>Total: $' + Cart.total + '</h2>';
 			var texty = "";
 			for (var i = 0; i < Cart.foodInCart.length; i++) {
-				texty += '<p style="font-size:130%; border-top: 1px solid #A9A9A9; padding: 4px">'
-					+ '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'subtract\')">-</button> '
-					+ '<input id ="item' + i + '" maxlength="2" style ="width:30px; height:30px;" value ='
-					+ Cart.foodInCart[i].amount + '></input> '
-					+ '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'add\')">+</button> '
-					+ Cart.foodInCart[i].name + '<span style="float: right"> $'
-					+ ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount).toFixed(2) + ' </span></p><ul>';
-				for (var j = 0; j < Cart.foodInCart[i].choices.length; j++) {
-					texty += '<li>' + Cart.foodInCart[i].choices[j] + '</li>'
+				if (!purchaseComplete) {
+					texty += '<p style="font-size:130%; border-top: 1px solid #A9A9A9; padding: 4px">'
+						+ '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'subtract\')">-</button> '
+						+ '<input id ="item' + i + '" maxlength="2" style ="width:30px; height:30px;" value ='
+						+ Cart.foodInCart[i].amount + '></input> '
+						+ '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'add\')">+</button> '
+						+ Cart.foodInCart[i].name + '<span style="float: right"> $'
+						+ ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount).toFixed(2) + ' </span></p><ul>';
+					for (var j = 0; j < Cart.foodInCart[i].choices.length; j++) {
+						texty += '<li>' + Cart.foodInCart[i].choices[j] + '</li>'
+					}
+					texty += '</ul>';
+					//Very badly written code but it works
+					$(document).off('change', '#item' + i);
+					handler(i);
 				}
-				texty += '</ul>';
-				//Very badly written code but it works
-				$(document).off('change', '#item' + i);
-				handler(i);
+				else{
+					texty += '<p style="font-size:130%; border-top: 1px solid #A9A9A9; padding: 4px">'
+						+ Cart.foodInCart[i].amount + ' '
+						+ Cart.foodInCart[i].name + '<span style="float: right"> $'
+						+ ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount).toFixed(2) + ' </span></p><ul>';
+					for (var j = 0; j < Cart.foodInCart[i].choices.length; j++) {
+						texty += '<li>' + Cart.foodInCart[i].choices[j] + '</li>'
+					}
+					texty += '</ul>';
+				}
 			}
 
 			if (Cart.foodInCart.length == 0) {
@@ -246,7 +265,7 @@
 			}
 			else {
 				$("#cart").html(texty);
-				$("#cartTotal").html(total + '<a href="payment.html" class="btn btn-danger btn-default" onclick="saveCartSession()">Continue to Checkout</a>');
+				$("#cartTotal").html(total);
 			}
 			saveCartSession();
 		}
@@ -265,39 +284,39 @@
 		}
 
 		function updateFood(index, increment) {
-      var originalVal = Cart.foodInCart[index].amount;
-      if (increment == 'subtract') Cart.foodInCart[index].amount--;
-      else if (increment == 'add') Cart.foodInCart[index].amount++;
-      else if (increment == 'form') {
-        var val = $('#item' + index).val();
-        if (val >= 0 && val < 100) Cart.foodInCart[index].amount = val;
-        else alert("Please put a number between 0 to 99.");
-      }
+			var originalVal = Cart.foodInCart[index].amount;
+			if (increment == 'subtract') Cart.foodInCart[index].amount--;
+			else if (increment == 'add') Cart.foodInCart[index].amount++;
+			else if (increment == 'form') {
+				var val = $('#item' + index).val();
+				if (val >= 0 && val < 100) Cart.foodInCart[index].amount = val;
+				else alert("Please put a number between 0 to 99.");
+			}
 
 
-      if (Cart.foodInCart[index].amount == 0) {
-        $("#alertHeader").html('Alert!<button type="button" class="close" data-dismiss="modal">&times;</button>');
-        $("#alert").html('<p style="font-size:110%;">Are you sure you want to remove ' + Cart.foodInCart[index].name + '?</p>' +
-          '<button data-dismiss="modal" onClick="alertFood(' + index + ',' + true + ',' + originalVal + ')" class="btn btn-success">yes</button> <span style="float:right"><button data-dismiss="modal" onClick="alertFood(' + index + ',' + false + ',' + originalVal + ')" class="btn btn-danger">no</button>');
-        $("#alertModal").modal();
-        //Cart.foodInCart.splice(index, 1);
-      }
-      else {
-        updateCart();
-      }
-    }
+			if (Cart.foodInCart[index].amount == 0) {
+				$("#alertHeader").html('Alert!<button type="button" class="close" data-dismiss="modal">&times;</button>');
+				$("#alert").html('<p style="font-size:110%;">Are you sure you want to remove ' + Cart.foodInCart[index].name + '?</p>' +
+					'<button data-dismiss="modal" onClick="alertFood(' + index + ',' + true + ',' + originalVal + ')" class="btn btn-success">yes</button> <span style="float:right"><button data-dismiss="modal" onClick="alertFood(' + index + ',' + false + ',' + originalVal + ')" class="btn btn-danger">no</button>');
+				$("#alertModal").modal();
+				//Cart.foodInCart.splice(index, 1);
+			}
+			else {
+				updateCart();
+			}
+		}
 
-    function alertFood(index, toDelete, originalVal) {
-      if (toDelete) {
-        Cart.foodInCart.splice(index, 1);
-        updateCart();
-      }
-      else {
-        Cart.foodInCart[index].amount = originalVal;
-        updateCart();
-      }
-	}
-	
+		function alertFood(index, toDelete, originalVal) {
+			if (toDelete) {
+				Cart.foodInCart.splice(index, 1);
+				updateCart();
+			}
+			else {
+				Cart.foodInCart[index].amount = originalVal;
+				updateCart();
+			}
+		}
+
 
 
 
@@ -306,10 +325,10 @@
 	</script>
 
 	<style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-    }
+		body {
+			margin: 0;
+			font-family: 'Roboto', sans-serif;
+		}
 
 		input[type="radio"] {
 			margin-right: 10px;
@@ -363,10 +382,7 @@
 
 
 		.main {
-
 			padding: 16px;
-			margin-top: 30px;
-			margin-left: 15%;
 			margin-right: 25%;
 			overflow: auto;
 		}
@@ -474,31 +490,34 @@
 			padding-left: 50px;
 		}
 
-		.center {
-		}
+		.center {}
+
 		.finalMessage {
+			z-index: -1;
+			background-image: url('delivery.png');
+			background-repeat: no-repeat;
 			display: none;
 			position: absolute;
-			height: 10%;
-			padding-top: 10%;
-			width: 30%
+			height: 100%;
+			padding-top: 28px;
+			padding-right: 30%;
+			width: 100%
 		}
-
 	</style>
 
 
 </head>
 
 <body>
-  <div class="navbar">
-    <a href="index.html">Home</a>
-    <a href="order.html">Order</a>
-    <a href="info.html">About Us</a>
-    <button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
-  </div>
+	<div class="navbar">
+		<a href="index.html">Home</a>
+		<a href="order.html">Order</a>
+		<a href="info.html">About Us</a>
+		<button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
+	</div>
 
 	<div class="main">
-		<div class="rightNav">
+		<div class="rightNav" style="margin-top: 28px; padding: 10px;">
 			<h1 style="text-align:center">Cart</h1>
 
 			<div id="cart">
@@ -508,7 +527,7 @@
 			</div>
 		</div>
 
-		<div class = "center" id="center">
+		<div class="center" id="center" style="margin-left: 15%; margin-top: 30px; padding: 16px;">
 			<div>
 				<h1>How would you like to pay?</h1>
 			</div>
@@ -576,11 +595,11 @@
 				<hr>
 				<h3>Where are we delivering to?</h3>
 
-				<div class = "address">
+				<div class="address">
 					<label>Address:</label>
 					<input id="addressinput" onkeydown="selection3()" type="text"><br>
 				</div>
-				
+
 			</div>
 
 			<div>
@@ -589,8 +608,8 @@
 			</div>
 		</div>
 
-		<div class = "finalMessage" id = "finalMessage">
-			<h4>Food is on the way!</h4>
+		<div class="finalMessage" id="finalMessage">
+			<H1 id='deliveryMessage'></H1>
 		</div>
 
 	</div>
@@ -600,60 +619,60 @@
 	<!-- This is for the modal(popups) for login and alert -->
 	<div class="container">
 		<div class="modal fade" id="alertModal">
-		  <div class="modal-dialog modal-sm" style="padding-top: 15%;">
-			<!-- Modal content-->
-			<div class="modal-content">
-			  <div class="modal-header" id="alertHeader" style="padding:10px 15px;">
-			  </div>
-	
-			  <div class="modal-body" style="padding:20px 20px;">
-	
-				<div id="alert">
-	
-				</div>
+			<div class="modal-dialog modal-sm" style="padding-top: 15%;">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header" id="alertHeader" style="padding:10px 15px;">
+					</div>
 
-			  </div>
+					<div class="modal-body" style="padding:20px 20px;">
+
+						<div id="alert">
+
+						</div>
+
+					</div>
+				</div>
 			</div>
-		  </div>
 		</div>
 
 		<!-- LoginModal -->
 		<div class="modal fade" id="loginModal" role="dialog">
-		  <div class="modal-dialog">
-	
-			<!-- Modal content-->
-			<div class="modal-content">
-			  <div class="modal-header" style="padding:35px 50px;">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4>Login</h4>
-			  </div>
-			  <div class="modal-body" style="padding:40px 50px;">
-				<form role="form">
-				  <div class="form-group">
-					<label for="usrname"></span> Username</label>
-					<input type="text" class="form-control" id="usrname" placeholder="Enter username">
-				  </div>
-				  <div class="form-group">
-					<label for="psw"></span> Password</label>
-					<input type="password" class="form-control" id="psw" placeholder="Enter password">
-				  </div>
-				  <div class="checkbox">
-					<label><input type="checkbox" value="" checked>Remember me</label>
-				  </div>
-				  <button type="submit" class="btn btn-light btn-default" </span> Login</button>
-				</form>
-			  </div>
-			  <div class="modal-footer">
-				<button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"></span>
-				  Cancel</button>
-				<p>Not a member? <a href="#">Sign Up</a></p>
-				<p>Forgot <a href="#">Password?</a></p>
-			  </div>
+			<div class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header" style="padding:35px 50px;">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4>Login</h4>
+					</div>
+					<div class="modal-body" style="padding:40px 50px;">
+						<form role="form">
+							<div class="form-group">
+								<label for="usrname"></span> Username</label>
+								<input type="text" class="form-control" id="usrname" placeholder="Enter username">
+							</div>
+							<div class="form-group">
+								<label for="psw"></span> Password</label>
+								<input type="password" class="form-control" id="psw" placeholder="Enter password">
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" value="" checked>Remember me</label>
+							</div>
+							<button type="submit" class="btn btn-light btn-default" </span> Login</button>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"></span>
+							Cancel</button>
+						<p>Not a member? <a href="#">Sign Up</a></p>
+						<p>Forgot <a href="#">Password?</a></p>
+					</div>
+				</div>
+
 			</div>
-	
-		  </div>
 		</div>
-	  </div>
+	</div>
 
 
 
