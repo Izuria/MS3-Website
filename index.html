@@ -1,383 +1,67 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-
-
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-  <script src="food.js"></script>
-
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap" rel="stylesheet">
-
-
 
   <script>
+  
+  
 
+  function moveToIndex(){
 
-    var currentCategory;
-
-    function choiceHandler(j) {
-      $(document).on('change', '#checkbox' + j, function () {
-        if ($("#checkbox" + j).is(':checked')) {
-          ratingCheckbox[j] = true;
-          if (currentCategory != undefined)
-            food(currentCategory);
-        }
-        else {
-          ratingCheckbox[j] = false;
-          if (currentCategory != undefined)
-            food(currentCategory);
-        }
-      });
-    }
-
-    for (var i = 0; i < 4; i++) {
-      choiceHandler(i);
-    }
-
-    var ratingCheckbox = [false, false, false, false, false];
-
-
-
-    $(document).ready(function () {
-      fillCartOnSessionStart();
-    });
-
-    function Food(name, price, restaurant, description, rating, choices, addonPrice) {
-      this.name = name;
-      this.price = price;
-      this.restaurant = restaurant;
-      this.description = description;
-      this.rating = rating;
-      this.choices = choices;
-      this.addonPrice = addonPrice;
-      this.amount = 1;
-    }
-
-
-    function fillCartOnSessionStart() {
-      $("#menu").html('<h1 style="text-align:center">Please select a category to get started.</h1>');
-      if (sessionStorage.getItem('Cart') != null) {
-        Cart = JSON.parse(sessionStorage.getItem('Cart'));
-        Cart.updateTotal = function () {
-          value = 0;
-          for (var i = 0; i < this.foodInCart.length; i++) {
-            value += ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount);
-          }
-          this.total = value.toFixed(2);
-        };
-        updateCart();
-      }
-      else {
-        Cart = {
-          foodInCart: new Array(),
-          total: '0',
-          updateTotal() {
-            value = 0;
-            for (var i = 0; i < this.foodInCart.length; i++) {
-              value += ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount);
-            }
-            this.total = value.toFixed(2);
-          }
-        };
-
-
-        $('#cart').html('<h3 style="text-align:center; border-top: 1px solid #A9A9A9; padding: 10px;">Your cart is currently empty</h3>');
-      }
-    }
-
-    var Cart;
-    var choicePrices = new Array(); //Hacky fix for prices of choice
-
-    function food(category) {
-
-
-      currentCategory = category;
-      var foodArray;
-
-      switch (category) {
-        case 'chicken':
-          foodArray = JSONmenu.Chicken;
-          break;
-        case 'rice':
-          foodArray = JSONmenu.Rice;
-          break;
-        case 'noodles':
-          foodArray = JSONmenu.Noodles;
-          break;
-        case 'soup':
-          foodArray = JSONmenu.Soup;
-          break;
-        case 'beef':
-          foodArray = JSONmenu.Beef;
-          break;
-      }
-
-      var highestFilter = -2;
-      for (var i = 3; i >= 0; i--) {
-        if (ratingCheckbox[i] == true) {
-          highestFilter = i;
-          break;
-        }
-      }
-
-      var texty = '<h1 style="font-size: 46px;  border-bottom: 1px solid #A9A9A9; margin: 37px 0px"><b>' + category.charAt(0).toUpperCase() + category.slice(1) + ' Dishes</b></h1>';
-      for (var i = 0; i < foodArray.length; i++) {
-
-        if (foodArray[i].rating >= (highestFilter + 2)) {
-          texty += '<img style="height:150px; width:275px; float:left; margin-right:10px; border:2px solid #bd3636;" src= "' + foodArray[i].image + '"><h1><b>'
-            + foodArray[i].name + '</b><p"font-size:20px;"> $' + foodArray[i].price + '<span style="font-size: 20px; float:right;">Rating: ' + foodArray[i].rating + '</span>'
-            + '</p></h1> <p>' + foodArray[i].restaurant +
-            '</p><p>' + foodArray[i].description + '</p>';
-
-          if (foodArray[i].choices != undefined) {
-            texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-danger btn-default">Customize</button><hr>';
-          }
-          else texty += '<button onclick="optionModal(\'' + category + '\',\'' + i + '\')" class="btn btn-light btn-default">Add</button><hr>';
-
-        }
-
-
-      }
-
-      $('#menu').fadeOut(150, function () {
-        $(this).html(texty).fadeIn(150);
-      });
-
-
-    }
-
-    function optionModal(category, index) {
-      var required = "";
-      var optional = "";
-      var foodArray;
-      var theIndex = parseInt(index);
-
-      switch (category) {
-        case 'chicken':
-          foodArray = JSONmenu.Chicken;
-          break;
-        case 'rice':
-          foodArray = JSONmenu.Rice;
-          break;
-        case 'noodles':
-          foodArray = JSONmenu.Noodles;
-          break;
-        case 'soup':
-          foodArray = JSONmenu.Soup;
-          break;
-        case 'beef':
-          foodArray = JSONmenu.Beef;
-          break;
-      }
-
-      if (foodArray[theIndex].choices != undefined) {
-        var length = foodArray[theIndex].choices.length;
-
-        for (var i = 0; i < foodArray[theIndex].choices.length; i++) {
-          choicePrices[i] = foodArray[theIndex].choices[i][2];
-          if (foodArray[theIndex].choices[i][1] == true) {
-            if (required === "") required += '<h2><b>Required:</b></h2>';
-            if (foodArray[theIndex].choices[i][2] > 0) {
-              required += '<input type ="radio" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i][0] + ' - $' + (foodArray[theIndex].choices[i][2]).toFixed(2) + '">' +
-                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] + ' - Add $' + (foodArray[theIndex].choices[i][2]).toFixed(2) + '</label><br>';
-            }
-            else {
-              required += '<input type ="radio" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i][0] + '">' +
-                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] + '</label><br>';
-            }
-          }
-          else {
-            if (optional === "") optional += '<h2><b>Optional:</b></h2>';
-            if (foodArray[theIndex].choices[i][2] > 0) {
-              optional += '<input type ="checkbox" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i][0] + ' - $' + (foodArray[theIndex].choices[i][2]).toFixed(2) + '">' +
-                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] + ' - Add $' + (foodArray[theIndex].choices[i][2]).toFixed(2) + '</label><br>';
-            }
-            else {
-              optional += '<input type ="checkbox" id="option' + i + '" name="foodOption" value="' + foodArray[theIndex].choices[i][0] + '">' +
-                '<label for="option' + i + '">' + foodArray[theIndex].choices[i][0] + '</label><br>';
-            }
-          }
-        }
-
-        $("#foodOptionHeader").html('<p style="font-size:70%;">Customize your ' + foodArray[theIndex].name + '!' + '<button type="button" class="close" data-dismiss="modal">&times;</button></p>');
-        $("#options").html(required + optional + '.<button onclick="foodToCart(\'' + category + '\',\'' + index + '\'' + ',\'' +
-          length + '\')" class="btn btn-light btn-default pull-right" data-dismiss="modal">Add</button>');
-        $("#optionModal").modal();
-      }
-      else {
-        foodToCart(category, index, 0);
-      }
-    }
-
-
-    function foodToCart(category, index, options) {
-
-      var theIndex = parseInt(index);
-      var food;
-      switch (category) {
-        case 'chicken':
-          food = JSONmenu.Chicken[theIndex];
-          break;
-        case 'rice':
-          food = JSONmenu.Rice[theIndex];
-          break;
-        case 'noodles':
-          food = JSONmenu.Noodles[theIndex];
-          break;
-        case 'soup':
-          food = JSONmenu.Soup[theIndex];
-          break;
-        case 'beef':
-          food = JSONmenu.Beef[theIndex];
-          break;
-      }
-      var theOptions = new Array();
-      var addonTotal = 0;
-
-      if (options > 0) { //this is a check to see how many options are selected
-        for (var i = 0; i < options; i++) {
-          if (document.getElementById('option' + i).checked) {
-            theOptions.push(document.getElementById('option' + i).value);
-            addonTotal += choicePrices[i];
-          }
-        }
-      }
-
-
-
-      var theFood = new Food(food.name, food.price, food.restaurant, food.description, food.rating, theOptions, addonTotal);
-      Cart.foodInCart.push(theFood);
-      updateCart();
-      //alert()
-    }
-
-    function updateCart() {
-
-      Cart["updateTotal"]();
-      var total = '<h2>Total: $' + Cart.total + '</h2>';
-      var texty = "";
-      for (var i = 0; i < Cart.foodInCart.length; i++) {
-
-
-
-        texty += '<p style="font-size:130%; border-top: 1px solid #A9A9A9; padding: 4px">'
-          + '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'subtract\')">-</button> '
-          + '<input id ="item' + i + '" maxlength="2" style ="width:30px; height:30px;" value ='
-          + Cart.foodInCart[i].amount + '></input> '
-          + '<button style="width:25px; height:30px" onclick="updateFood(' + i + ',\'add\')">+</button> '
-          + Cart.foodInCart[i].name + '<span style="float: right"> $'
-          + ((parseFloat(Cart.foodInCart[i].price) + Cart.foodInCart[i].addonPrice) * Cart.foodInCart[i].amount).toFixed(2) + ' </span></p><ul>';
-        for (var j = 0; j < Cart.foodInCart[i].choices.length; j++) {
-          texty += '<li>' + Cart.foodInCart[i].choices[j] + '</li>'
-        }
-        texty += '</ul>';
-
-
-        //Very badly written code but it works
-
-        $(document).off('change', '#item' + i);
-        handler(i);
-      }
-
-      if (Cart.foodInCart.length == 0) {
-        $('#cart').html('<h3 style="text-align:center; border-top: 1px solid #A9A9A9; padding: 10px;">Your cart is currently empty</h3>');
-        $("#cartTotal").html("");
-      }
-      else {
-        $("#cart").html(texty);
-        $("#cartTotal").html(total + '<a href="payment.html" class="btn btn-danger btn-default" onclick="saveCartSession()">Continue to Checkout</a>');
-      }
-      saveCartSession();
-    }
-
-    function handler(j) {
-      return $(document).on('change', '#item' + j, function () {
-        updateFood(j, 'form');
-      });
-    }
-
-
-    function saveCartSession() {
-      var cartData = JSON.stringify(Cart);
-      sessionStorage.setItem('Cart', cartData);
-
-    }
-
-
-    function updateFood(index, increment) {
-      var originalVal = Cart.foodInCart[index].amount;
-      if (increment == 'subtract') Cart.foodInCart[index].amount--;
-      else if (increment == 'add') Cart.foodInCart[index].amount++;
-      else if (increment == 'form') {
-        var val = $('#item' + index).val();
-        if (val >= 0 && val < 100) Cart.foodInCart[index].amount = val;
-        else alert("Please put a number between 0 to 99.");
-      }
-
-
-      if (Cart.foodInCart[index].amount == 0) {
-        $("#alertHeader").html('Alert!<button type="button" class="close" data-dismiss="modal">&times;</button>');
-        $("#alert").html('<p style="font-size:110%;">Are you sure you want to remove ' + Cart.foodInCart[index].name + '?</p>' +
-          '<button data-dismiss="modal" onClick="alertFood(' + index + ',' + true + ',' + originalVal + ')" class="btn btn-success">yes</button> <span style="float:right"><button data-dismiss="modal" onClick="alertFood(' + index + ',' + false + ',' + originalVal + ')" class="btn btn-danger">no</button>');
-        $("#alertModal").modal();
-        //Cart.foodInCart.splice(index, 1);
-      }
-      else {
-        updateCart();
-      }
-    }
-
-    function alertFood(index, toDelete, originalVal) {
-      if (toDelete) {
-        Cart.foodInCart.splice(index, 1);
-        updateCart();
-      }
-      else {
-        Cart.foodInCart[index].amount = originalVal;
-        updateCart();
-      }
-    }
-
-
-    /*
-    var text = '';
-    for(var i = 0; i < 100; i++){
-      console.log(i);
-      if(i == 0) text += '<option val=' + i + '>Remove</option>';
-      else if(updatedValue == i) text += '<option val=' + i + ' selected="selected">' + i + '</option>';
-      else text += '<option val=' + i + '>' + i + '</option>';
-      }
-      console.log(text);
-      $('sickID').html(text);
-    */
-
+    var address = document.getElementById("address").value;
+    sessionStorage.setItem('address', address);
+    window.location.href = "order.html";
+  }
 
 
   </script>
+<style>
+  body {
+    background-image: url('pic2.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    color: black;
+    text-align: center;
+    padding-top: 200px;
+  }
 
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-    }
+  h1 {
+    color: white;
+  }
 
-    input[type="radio"] {
-      margin-right: 10px;
-    }
+  .btn {
+    background-color: rgb(189, 54, 54);
+    color: white;
+    padding: 16px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 50%;
+    opacity: 0.9;
+  }
 
-    input[type="checkbox"] {
-      margin-right: 10px;
-    }
+  
+
+  .btn:hover {
+    color: white;
+    opacity: 1;
+  }
+
+  input[type=text] {
+    width: 50%;
+    margin: 5px 0 22px 0;
+    display: inline-block;
+    border: none;
+    background: #f1f1f1;
+    padding: 15px;
+  }
 
 
-
-    .navbar {
+  .navbar {
       border-radius: 0;
       overflow: hidden;
       background-color: rgb(189, 54, 54);
@@ -423,246 +107,30 @@
 
 
 
-    .main {
-
-      padding: 16px;
-      margin-top: 30px;
-      margin-left: 15%;
-      margin-right: 25%;
-      overflow: auto;
-    }
 
 
-    .modal-header,
-    h4,
-    .close {
-      background-color: rgb(189, 54, 54);
-      color: white !important;
-      text-align: center;
-      font-size: 30px;
-    }
 
-    .modal-footer {
-      background-color: #f9f9f9;
-    }
-
-
-    .leftNav {
-      border-right: 2px solid rgb(189, 54, 54);
-      padding-left: 10px;
-      padding-right: 10px;
-      margin-top: 8px;
-      background-color: rgb(245, 245, 245);
-      position: fixed;
-      left: 0;
-      width: 15%;
-      height: 100%;
-    }
-
-    .leftNav button {
-      background-color: rgb(245, 245, 245);
-      border: none;
-      width: 100%;
-      display: block;
-      color: #000000;
-      text-decoration: none;
-      text-align: left;
-      padding: 14px;
-      font-size: 17px;
-    }
-
-    .leftNav button:hover {
-      background: #ddd;
-      color: black;
-
-    }
-
-    .leftNav a {
-      display: block;
-      color: #000000;
-      padding: 14px 16px;
-      text-decoration: none;
-      font-size: 17px;
-    }
-
-    .leftNav a:hover {
-      color: #f1f1f1;
-    }
-
-    .rightNav {
-      border-left: 2px solid rgb(189, 54, 54);
-      padding-left: 10px;
-      padding-right: 10px;
-      margin-top: 8px;
-      background-color: rgb(245, 245, 245);
-      position: fixed;
-      right: 0;
-      width: 25%;
-      height: 100%;
-      overflow: auto;
-    }
-  </style>
-</head>
+</style>
 
 <body>
 
+
   <div class="navbar">
-    <a href="index.html">refLink1</a>
-    <a href="#refLink2">refLink2</a>
-    <a href="#refLink3">refLink3</a>
+    <a href="index.html">Home</a>
+    <a href="order.html">Order</a>
+    <a href="info.html">About Us</a>
     <button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
   </div>
 
 
 
+  <h1>Where are we delivering to?</h1>
 
 
 
 
-
-  <div class="container">
-
-
-    <div class="modal fade" id="alertModal">
-      <div class="modal-dialog modal-sm" style="padding-top: 15%;">
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header" id="alertHeader" style="padding:10px 15px;">
-          </div>
-
-          <div class="modal-body" style="padding:20px 20px;">
-
-            <div id="alert">
-
-            </div>
-            <!--   <button type="submit" class="btn btn-light btn-default pull-right" data-dismiss="modal"></span>
-              Add</button> -->
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="optionModal">
-
-      <div class="modal-dialog" style="padding-top: 15%;">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header" id="foodOptionHeader" style="padding:10px 15px;">
-
-          </div>
-
-          <div class="modal-body" style="padding:20px 20px;">
-
-            <div id="options">
-
-
-
-            </div>
-            <!--   <button type="submit" class="btn btn-light btn-default pull-right" data-dismiss="modal"></span>
-              Add</button> -->
-
-          </div>
-        </div>
-
-      </div>
-
-
-    </div>
-
-
-
-
-
-
-
-    <!-- LoginModal -->
-    <div class="modal fade" id="loginModal" role="dialog">
-      <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header" style="padding:35px 50px;">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4>Login</h4>
-          </div>
-          <div class="modal-body" style="padding:40px 50px;">
-            <form role="form">
-              <div class="form-group">
-                <label for="usrname"></span> Username</label>
-                <input type="text" class="form-control" id="usrname" placeholder="Enter username">
-              </div>
-              <div class="form-group">
-                <label for="psw"></span> Password</label>
-                <input type="password" class="form-control" id="psw" placeholder="Enter password">
-              </div>
-              <div class="checkbox">
-                <label><input type="checkbox" value="" checked>Remember me</label>
-              </div>
-              <button type="submit" class="btn btn-light btn-default" </span> Login</button>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"></span>
-              Cancel</button>
-            <p>Not a member? <a href="#">Sign Up</a></p>
-            <p>Forgot <a href="#">Password?</a></p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-
-
-
-
-
-  <div class="main">
-    <div class="leftNav">
-      <h1>Categories</h1>
-
-
-      <button onclick="food('chicken')">Chicken</button>
-      <button onclick="food('rice')">Rice</button>
-      <button onclick="food('noodles')">Noodles</button>
-      <button onclick="food('soup')">Soup</button>
-      <button onclick="food('beef')">Beef</button>
-
-      <h1>Filters</h1>
-      <fieldset style>
-        <input type="checkbox" name="checkbox0" id="checkbox0">
-        <label for="checkbox0">2 Stars or higher</label>
-        <br><input type="checkbox" name="checkbox1" id="checkbox1">
-        <label for="checkbox1">3 Stars or higher</label>
-        <br><input type="checkbox" name="checkbox2" id="checkbox2">
-        <label for="checkbox2">4 Stars or higher</label>
-        <br><input type="checkbox" name="checkbox3" id="checkbox3">
-        <label for="checkbox3">5 Stars</label>
-      </fieldset>
-
-    </div>
-    <div class="rightNav">
-      <h1 style="text-align:center">Cart</h1>
-
-      <div id="cart">
-      </div>
-      <div id="cartTotal">
-
-      </div>
-    </div>
-
-
-
-
-    <!-- The main part of the page -->
-    <div id="menu">
-      <!-- Consists of the menu. Nothing should be in here -->
-    </div>
-
-  </div>
-
+    <input type="text" id="address" name="address" placeholder="Type address here" value=""><br>
+    <button onclick="moveToIndex()" class="btn">Continue </button><br><br>
 
 
 

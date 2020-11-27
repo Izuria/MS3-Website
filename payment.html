@@ -8,6 +8,9 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap" rel="stylesheet">
+
 
 	<script type="text/javascript">
 		var card = false;// checks if a card # is given
@@ -161,9 +164,19 @@
 
 		var Cart;
 
+
 		$(document).ready(function () {
 			fillCartOnSessionStart();
+			getAddrOnStart();
 		});
+
+		function getAddrOnStart(){
+			if (sessionStorage.getItem('address') != null){
+				var theaddress = sessionStorage.getItem('address');
+				document.getElementById('addressinput').value = theaddress;
+				selection3();
+			}
+		}
 
 		function Food(name, price, restaurant, description, rating, choices, addonPrice) {
 			this.name = name;
@@ -293,10 +306,10 @@
 	</script>
 
 	<style>
-		body {
-			margin: 0;
-			font-family: 'Roboto', sans-serif;
-		}
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+    }
 
 		input[type="radio"] {
 			margin-right: 10px;
@@ -428,15 +441,12 @@
 			overflow: auto;
 		}
 
-		.innerRadio1 {
-			padding-left: 40px;
-		}
-		
-		.innerRadio2 {
-			padding-left: 36px;
+		.innerRadio {
+			padding-left: 50px;
 		}
 
 		.radio-inline {
+			padding-left: 70px;
 			padding-right: 30px;
 		}
 
@@ -451,17 +461,17 @@
 
 		.userName {
 			display: none;
-			padding-left: 4px;
+			padding-left: 50px;
 		}
 
 		.giftcard {
 			display: none;
-			padding-left: 27px;
+			padding-left: 50px;
 		}
 
 		.address {
 			padding-top: 10px;
-			padding-left: 70px;
+			padding-left: 50px;
 		}
 
 		.center {
@@ -474,26 +484,18 @@
 			width: 30%
 		}
 
-		.date {
-			padding-left: 42px;
-		}
-
-		.cvc {
-			padding-left: 57px;
-		}
-
 	</style>
 
 
 </head>
 
 <body>
-	<div class="navbar">
-		<a href="index.html">refLink1</a>
-		<a href="StoreInfo.html">Store Info</a>
-		<a href="#refLink3">refLink3</a>
-		<button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
-	</div>
+  <div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="order.html">Order</a>
+    <a href="info.html">About Us</a>
+    <button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
+  </div>
 
 	<div class="main">
 		<div class="rightNav">
@@ -512,35 +514,30 @@
 			</div>
 
 			<div>
-				<input type="radio" name="payment" onclick="payByCard()">
-				<label>Card</label><br>
-				<div class=innerRadio1>
-					<label>Card number:</label>
+				<input type="radio" id='cardRadio' name="payment" onclick="payByCard()">
+				<label for='cardRadio'>Card</label><br>
+				<div class=innerRadio>
+					<label for='card'>Card number:</label>
 					<input id='card' type="text" disabled onkeydown="cardCheck()"><br>
-					<div class = date>
-						<label>MM/YY:</label>
-						<input id='month' type="text" disabled onkeydown="dateCheck()"><br>
-					</div>
-
-					<div class = cvc>
-						<label>CVC:</label>
-						<input id='CVC' type="text" disabled onkeydown="cvcCheck ()">
-					</div>
+					<label for='month'>MM/YY:</label>
+					<input id='month' type="text" disabled onkeydown="dateCheck()"><br>
+					<label for='CVC'>CVV/CVC:</label>
+					<input id='CVC' maxlength='3' type="text" disabled onkeydown="cvcCheck ()">
 					<hr>
 				</div>
 			</div>
 
 			<div class=outterRadio>
-				<input type="radio" name="payment" onclick="other()">
-				<label>Other</label><br>
-				<div class=innerRadio2>
+				<input type="radio" id='otherRadio' name="payment" onclick="other()">
+				<label for='otherRadio'>Other</label><br>
+				<div class=innerRadio>
 					<input type="radio" name="options" id='paypal' disabled onclick="selection1('paypal')">
-					<label>paypal</label><br>
+					<label for='paypal'>PayPal</label><br>
 
 					<div class=userName id=username>
 
-						<div class="radio-inline username">
-							<label>Username:</label>
+						<div class="radio-inline">
+							<label>User name:</label>
 							<input type="text" onkeydown="paypalFunc('username')">
 						</div>
 
@@ -549,40 +546,39 @@
 							<input type="password" onkeydown="paypalFunc('password')"><br>
 						</div>
 					</div>
-
 					<div>
 						<input type="radio" name="options" id='op2' disabled onclick="selection1('giftcard')">
-						<label>giftcard</label><br>
+						<label for='op2'>Gift Card</label><br>
 					</div>
 
 					<div class=giftcard id=giftcard>
-						<label>giftcard #:</label>
+						<label>giftcard number:</label>
 						<input type="text" onkeydown="giftcardFunc()"><br>
 					</div>
 
 					<input type="radio" name="options" id='op3' disabled onclick="selection1('cash')">
-					<label>cash</label>
+					<label for='op3'>Cash</label>
 					<hr>
 				</div>
 			</div>
 
 			<div class="radio-inline">
 				<input type="radio" name="when" id="payNow" onclick="selection2()">
-				<label>Pay now</label>
+				<label for='payNow'>Pay now</label>
 			</div>
 
 			<div class="radio-inline">
 				<input type="radio" name="when" id="payAtDoor" onclick="selection2()">
-				<label>Pay at door</label>
+				<label for='payAtDoor'>Pay at door</label>
 			</div>
 
 			<div>
 				<hr>
-				<h3>Where are we delivering To?</h3>
+				<h3>Where are we delivering to?</h3>
 
 				<div class = "address">
 					<label>Address:</label>
-					<input onkeydown="selection3()" type="text"><br>
+					<input id="addressinput" onkeydown="selection3()" type="text"><br>
 				</div>
 				
 			</div>
