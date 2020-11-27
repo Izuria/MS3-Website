@@ -457,12 +457,15 @@
 			overflow: auto;
 		}
 
-		.innerRadio {
-			padding-left: 50px;
+		.innerRadio1 {
+			padding-left: 40px;
+		}
+		
+		.innerRadio2 {
+			padding-left: 36px;
 		}
 
 		.radio-inline {
-			padding-left: 70px;
 			padding-right: 30px;
 		}
 
@@ -477,20 +480,18 @@
 
 		.userName {
 			display: none;
-			padding-left: 50px;
+			padding-left: 4px;
 		}
 
 		.giftcard {
 			display: none;
-			padding-left: 50px;
+			padding-left: 27px;
 		}
 
 		.address {
 			padding-top: 10px;
-			padding-left: 50px;
+			padding-left: 70px;
 		}
-
-		.center {}
 
 		.finalMessage {
 			z-index: -1;
@@ -502,6 +503,14 @@
 			padding-top: 28px;
 			padding-right: 30%;
 			width: 100%
+		}
+		
+		.date {
+			padding-left: 34px;
+		}
+
+		.cvc {
+			padding-left: 22px;
 		}
 	</style>
 
@@ -535,13 +544,18 @@
 			<div>
 				<input type="radio" id='cardRadio' name="payment" onclick="payByCard()">
 				<label for='cardRadio'>Card</label><br>
-				<div class=innerRadio>
+				<div class=innerRadio1>
 					<label for='card'>Card number:</label>
 					<input id='card' type="text" disabled onkeydown="cardCheck()"><br>
-					<label for='month'>MM/YY:</label>
-					<input id='month' type="text" disabled onkeydown="dateCheck()"><br>
-					<label for='CVC'>CVV/CVC:</label>
-					<input id='CVC' maxlength='3' type="text" disabled onkeydown="cvcCheck ()">
+					<div class = date>
+						<label for='month'>MM/YY:</label>
+						<input id='month' type="text" disabled onkeydown="dateCheck()"><br>
+					</div>
+					
+					<div class = cvc>
+						<label for='CVC'>CVV/CVC:</label>
+						<input id='CVC' maxlength='3' type="text" disabled onkeydown="cvcCheck ()">
+					</div>
 					<hr>
 				</div>
 			</div>
@@ -549,7 +563,7 @@
 			<div class=outterRadio>
 				<input type="radio" id='otherRadio' name="payment" onclick="other()">
 				<label for='otherRadio'>Other</label><br>
-				<div class=innerRadio>
+				<div class=innerRadio2>
 					<input type="radio" name="options" id='paypal' disabled onclick="selection1('paypal')">
 					<label for='paypal'>PayPal</label><br>
 
@@ -571,7 +585,7 @@
 					</div>
 
 					<div class=giftcard id=giftcard>
-						<label>giftcard number:</label>
+						<label>Giftcard #:</label>
 						<input type="text" onkeydown="giftcardFunc()"><br>
 					</div>
 

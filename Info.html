@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang = "en">
+	<head>
+    	<title>Store Info</title>
+    
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		
+
+
+      <style>
+    
+        body {
+          margin: 0;
+          font-family: 'Roboto', sans-serif;
+        }
+    
+        input[type="radio"] {
+          margin-right: 10px;
+        }
+    
+        .navbar {
+          border-radius: 0;
+          overflow: hidden;
+          background-color: rgb(189, 54, 54);
+          position: fixed;
+          top: 0;
+          width: 100%;
+          z-index:100;
+        }
+    
+        .navbar a {
+          float: left;
+          display: block;
+          color: #f2f2f2;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+          font-size: 17px;
+        }
+    
+        .navbar button {
+          background-color: rgb(189, 54, 54);
+          border: none;
+          float: right;
+          display: block;
+          color: #f2f2f2;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+          font-size: 17px;
+        }
+    
+        .navbar button:hover {
+          background: #ddd;
+          color: black;
+        }
+    
+        .navbar a:hover {
+          background: #ddd;
+          color: black;
+        }
+    
+        .main {
+    
+          padding: 16px;
+          margin-top: 30px;
+          margin-left: 15%;
+          margin-right: 25%;
+          overflow: auto;
+        }
+    
+        .modal-header,
+        h4,
+        .close {
+          background-color: rgb(189, 54, 54);
+          color: white !important;
+          text-align: center;
+          font-size: 30px;
+        }
+    
+        .modal-footer {
+          background-color: #f9f9f9;
+        }
+    
+        .leftNav {
+          border-right: 2px solid rgb(189, 54, 54);
+          padding-left: 10px;
+          padding-right: 10px;
+          margin-top: 8px;
+          background-color: rgb(245, 245, 245);
+          position: fixed;
+          left: 0;
+          width: 15%;
+          height: 100%;
+        }
+    
+        .leftNav button {
+          background-color: rgb(245, 245, 245);
+          border: none;
+          width: 100%;
+          display: block;
+          color: #000000;
+          text-decoration: none;
+          text-align: left;
+          padding: 14px;
+          font-size: 17px;
+        }
+    
+        .leftNav button:hover {
+          background: #ddd;
+          color: black;
+    
+        }
+    
+        .leftNav a {
+          display: block;
+          color: #000000;
+          padding: 14px 16px;
+          text-decoration: none;
+          font-size: 17px;
+        }
+    
+        .leftNav a:hover {
+          color: #f1f1f1;
+        }
+    
+        .rightNav {
+          border-left: 2px solid rgb(189, 54, 54);
+          padding-left: 10px;
+          padding-right: 10px;
+          margin-top: 8px;
+          background-color: rgb(245, 245, 245);
+          position: fixed;
+          right: 0;
+          width: 25%;
+          height: 100%;
+          overflow: auto;
+        }
+        
+        .paragraphs {
+          padding-left: 20px;
+          margin-right: 35%;
+        }
+      </style>
+    </head>
+    
+    <body>
+
+      <div class="navbar">
+        <a href="index.html">refLink1</a>
+        <a href="StoreInfo.html">Store Info</a>
+        <a href="#refLink3">refLink3</a>
+        <button type="button" data-toggle="modal" data-target="#loginModal">Login</button>
+      </div>
+  
+      <div class="main">
+        <div class="rightNav">
+          <h1 style="text-align:center">Cart</h1>
+        
+          <div id="cart">
+          </div>
+          <div id="cartTotal">
+        
+          </div>
+      </div>
+  
+        <div>
+        
+          <h2>General Info</h2>
+          <div class = paragraphs>
+            <p>Location: 123 Baystreet Winnipeg
+            <br>Phone #: (204) 491-2291
+            </p>
+            <hr>
+          </div>
+
+          <h2>Delivery Policy</h2>
+          <div class = paragraphs>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p> 
+              <hr>
+          </div>
+
+          <h2>News</h2>
+          <div class = paragraphs>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce urna dolor, vehicula vitae lobortis vitae, accumsan at sapien.
+              Phasellus lectus felis, viverra sit amet ornare nec, convallis id neque. Integer mauris turpis, consequat eu tortor vitae, tristique imperdiet mauris.
+              Sed vitae feugiat felis. Nullam id placerat urna. Nullam sapien odio, imperdiet eget tempus et, ornare ac est.
+              Etiam id mauris commodo, luctus magna a, dapibus justo. Quisque non lacus mauris. Vestibulum sed metus purus.
+              Aenean eget mauris imperdiet dolor tempor molestie. Sed id ante convallis, fringilla mauris sed, vulputate dolor.
+              Vestibulum laoreet iaculis ligula non rutrum. Phasellus porta ipsum non libero egestas, ac sagittis eros varius.</p>
+              <hr>
+          </div>
+        </div>
+        
+      </div>
+
+
+	</body>
+</html>
