@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap" rel="stylesheet">
 
-  <script>
-  
-  
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap" rel="stylesheet">
 
-  function moveToIndex(){
+<script>
+
+
+
+  function moveToIndex() {
 
     var address = document.getElementById("address").value;
     sessionStorage.setItem('address', address);
@@ -21,7 +21,7 @@
   }
 
 
-  </script>
+</script>
 <style>
   body {
     background-image: url('pic2.png');
@@ -39,7 +39,7 @@
     color: white;
   }
 
-  .btn {
+  .contbtn {
     background-color: rgb(189, 54, 54);
     color: white;
     padding: 16px 20px;
@@ -50,70 +50,72 @@
     opacity: 0.9;
   }
 
-  
 
-  .btn:hover {
+
+  .contbtn:hover {
     color: white;
     opacity: 1;
   }
 
-  input[type=text] {
-    width: 50%;
-    margin: 5px 0 22px 0;
-    display: inline-block;
-    border: none;
-    background: #f1f1f1;
-    padding: 15px;
-  }
+
 
 
   .navbar {
-      border-radius: 0;
-      overflow: hidden;
-      background-color: rgb(189, 54, 54);
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 100;
-    }
+    border-radius: 0;
+    overflow: hidden;
+    background-color: rgb(189, 54, 54);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+  }
 
-    .navbar a {
-      float: left;
-      display: block;
-      color: #f2f2f2;
-      text-align: center;
-      padding: 14px 16px;
-      text-decoration: none;
-      font-size: 17px;
-    }
-
-
-    .navbar button {
-      background-color: rgb(189, 54, 54);
-      border: none;
-      float: right;
-      display: block;
-      color: #f2f2f2;
-      text-align: center;
-      padding: 14px 16px;
-      text-decoration: none;
-      font-size: 17px;
-    }
-
-    .navbar button:hover {
-      background: #ddd;
-      color: black;
-    }
+  .navbar a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
 
 
-    .navbar a:hover {
-      background: #ddd;
-      color: black;
-    }
+  .navbar button {
+    background-color: rgb(189, 54, 54);
+    border: none;
+    float: right;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+
+  .navbar button:hover {
+    background: #ddd;
+    color: black;
+  }
 
 
+  .navbar a:hover {
+    background: #ddd;
+    color: black;
+  }
 
+  .modal-header,
+		h4,
+		.close {
+			background-color: rgb(189, 54, 54);
+			color: white !important;
+			text-align: center;
+			font-size: 30px;
+		}
 
+		.modal-footer {
+			background-color: #f9f9f9;
+		}
 
 
 </style>
@@ -129,17 +131,60 @@
   </div>
 
 
-
   <h1>Where are we delivering to?</h1>
 
+  <input type="text" id="address" name="address" placeholder="Type address here" style="margin: 5px 0 22px 0; display: inline-block; width: 50%;    border: none;
+  background: #f1f1f1;
+  padding: 15px;"><br>
+  <button onclick="moveToIndex()" class="contbtn">Continue </button><br><br>
 
 
 
-    <input type="text" id="address" name="address" placeholder="Type address here" value=""><br>
-    <button onclick="moveToIndex()" class="btn">Continue </button><br><br>
 
+
+
+  
 
 
 </body>
+
+<div class="container" style="text-align:left">
+  <!-- LoginModal -->
+  <div class="modal fade" id="loginModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="padding:35px 50px;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4>Login</h4>
+        </div>
+        <div class="modal-body" style="padding:40px 50px;">
+          <form role="form">
+            <div class="form-group">
+              <label for="usrname"></span> Username</label>
+              <input type="text" class="form-control" id="usrname" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+              <label for="psw"></span> Password</label>
+              <input type="password" class="form-control" id="psw" placeholder="Enter password">
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="" checked>Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-light btn-default" </span> Login</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"></span>
+            Cancel</button>
+          <p>Not a member? <a href="#">Sign Up</a></p>
+          <p>Forgot <a href="#">Password?</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 </html>
