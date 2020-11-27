@@ -1,50 +1,58 @@
 <!DOCTYPE html>
 <html>
+<style>
+
+
+body {
+  background-image:url('pic2.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  color: white;
+  text-align: center;
+  padding-top: 200px; 
+}
+
+h1 {
+  color: white;
+}
+
+.btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 50%;
+  opacity: 0.9;
+}
+
+.btn:hover {
+  opacity: 1;
+}
+
+input[type=text] {
+  width: 50%;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+  padding: 15px;
+}
+
+
+</style>
 <body>
 
 
-
-
-<style>
-	body {
-		background-image:url('burger-rajesh.jpg');
-		background-repeat: no-repeat;
-		background-attachment: fixed;
-		background-size: cover;
-		color: white;
-	}
-
-	h1 {
-		color: white;
-	}
-</style>
-
 <h1>Where are we delivering to?</h1>
 
-<form action="/address_page.php">
-	<label for= "address"> Address: </label><br><br>
-	<input type= "text" id ="address" name="address" value=""><br><br>
-
-
-	<button type="Purchase">Purchase </button><br><br>
-
-
-
+<form action="/address_page.php" style="float:center;">
+  <label for= "address"><h2><b> Address: </b></h2></label><br><br>
+  <input type= "text" id ="address" name="address" value=""><br><br>
+  <button type="submit" class="btn">Continue </button><br><br>
 </form>
-
-
-<div class="loginPage">
-	<label for="uName"><b>Username</b></label><br><br>
-	<input type="txt" placeholder="Enter your username" name="uName" required>
-
-	<label for="psw"><b>Password</b></label><br><br>
-	<input type = "passWord" placeholder="Enter your password" name= "psw" required>
-
-	<button type="submit">Login</button>
-
-	<label>
-		<input type="checkbox" checked="checked" name="remember"> Remember your id</label>
-</div>
 
 
 </body>
